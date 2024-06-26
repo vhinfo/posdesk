@@ -11,6 +11,8 @@ log.transports.file.resolvePathFn = () => path.join(appDirectory, 'logs/main.log
 log.info('Log from the main process');
 log.catchErrors();
 
+log.info('ERP TOKEN:', process.env.ERP_TOKEN);
+
 const require = createRequire(import.meta.url)
 const __dirname = path.dirname(fileURLToPath(import.meta.url))
 
