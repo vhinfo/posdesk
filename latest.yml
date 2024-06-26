@@ -1,0 +1,7 @@
+version: 0.0.2
+files:
+  - url: "https://github.com/pedrogomes30/posdesk/releases/download/0.0.2/posdesk-Windows-0.0.1-Setup.exe"
+    sha512: "2B9C8E70FDD8E6A52A5F39E81887090E81A4B4B99F7F11E37D5D2413C5B4DCAB..."
+    size: 77030198 
+    updateTo: "0.0.2" 
+    downloadName: "posdesk-Windows-0.0.1-Setup.exe"  

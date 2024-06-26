@@ -1,8 +1,15 @@
 import { app, BrowserWindow, shell, ipcMain } from 'electron'
-import { createRequire } from 'node:module'
-import { fileURLToPath } from 'node:url'
-import path from 'node:path'
-import os from 'node:os'
+import { createRequire } from 'module'; 
+import { fileURLToPath } from 'url';
+import path from 'path';
+import os from 'os';
+
+Object.defineProperty(app, 'isPackaged', {
+  get() {
+    return true;
+  }
+});
+
 
 const require = createRequire(import.meta.url)
 const __dirname = path.dirname(fileURLToPath(import.meta.url))
@@ -29,6 +36,7 @@ if (!app.requestSingleInstanceLock()) {
 let win: BrowserWindow | null = null
 const preload = path.join(__dirname, '../preload/index.mjs')
 const indexHtml = path.join(RENDERER_DIST, 'index.html')
+const { autoUpdater } = require('electron-updater');
 
 async function createWindow() {
   win = new BrowserWindow({
@@ -60,7 +68,29 @@ async function createWindow() {
   // win.webContents.on('will-navigate', (event, url) => { }) #344
 }
 
-app.whenReady().then(createWindow)
+// app.whenReady().then(createWindow)
+app.whenReady().then(() => {
+  console.log('verificando atualizações...')
+  checkForUpdates()
+  createWindow();
+});
+
+setInterval(() => {
+  console.log('Verificando atualizações...');
+  checkForUpdates()
+}, 600000);
+
+
+autoUpdater.on('update-available', () => {
+  console.log('Atualização disponível');
+});
+
+
+autoUpdater.on('update-downloaded', () => {
+  console.log('Atualização baixada, aplicando...');
+  autoUpdater.quitAndInstall();
+});
+
 
 app.on('window-all-closed', () => {
   win = null
@@ -100,3 +130,16 @@ ipcMain.handle('open-win', (_, arg) => {
     childWindow.loadFile(indexHtml, { hash: arg })
   }
 })
+
+function checkForUpdates() {
+  try {
+    autoUpdater.setFeedURL({
+      provider: 'generic',
+      url: 'https://github.com/pedrogomes30/posdesk',
+    });
+    autoUpdater.checkForUpdates();
+  } catch (e) {
+    console.log('Falha ao recuperar atualizações', e);
+  }
+}
+
