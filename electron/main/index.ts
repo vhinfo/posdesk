@@ -3,13 +3,13 @@ import { createRequire } from 'module';
 import { fileURLToPath } from 'url';
 import path from 'path';
 import os from 'os';
+import log from 'electron-log';
 
-Object.defineProperty(app, 'isPackaged', {
-  get() {
-    return true;
-  }
-});
-
+log.initialize();
+const appDirectory = path.dirname(app.getPath('exe'));
+log.transports.file.resolvePathFn = () => path.join(appDirectory, 'logs/main.log');
+log.info('Log from the main process');
+log.catchErrors();
 
 const require = createRequire(import.meta.url)
 const __dirname = path.dirname(fileURLToPath(import.meta.url))
@@ -70,24 +70,24 @@ async function createWindow() {
 
 // app.whenReady().then(createWindow)
 app.whenReady().then(() => {
-  console.log('verificando atualizações...')
+  log.info('verificando atualizações...')
   checkForUpdates()
   createWindow();
 });
 
 setInterval(() => {
-  console.log('Verificando atualizações...');
+  log.info('Verificando atualizações...');
   checkForUpdates()
 }, 600000);
 
 
 autoUpdater.on('update-available', () => {
-  console.log('Atualização disponível');
+  log.info('Atualização disponível');
 });
 
 
 autoUpdater.on('update-downloaded', () => {
-  console.log('Atualização baixada, aplicando...');
+  log.info('Atualização baixada, aplicando...');
   autoUpdater.quitAndInstall();
 });
 
@@ -133,13 +133,11 @@ ipcMain.handle('open-win', (_, arg) => {
 
 function checkForUpdates() {
   try {
-    autoUpdater.setFeedURL({
-      provider: 'generic',
-      url: 'https://github.com/pedrogomes30/posdesk',
-    });
+    log.info('tentando atualizar');
     autoUpdater.checkForUpdates();
   } catch (e) {
-    console.log('Falha ao recuperar atualizações', e);
+
+    log.info('Falha ao recuperar atualizações', e);
   }
 }
 

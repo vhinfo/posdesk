@@ -4,12 +4,14 @@
   "appId": "com.example.posdesk",
   "asar": true,
   "productName": "posdesk",
-  "publish": 
-    [{
+  "publish": [
+    {
       "provider": "github",
       "owner": "pedrogomes30",
-      "repo": "posdesk"
-    }],
+      "repo": "posdesk",
+      "releaseType": "release"
+    }
+  ],
   "directories": {
     "output": "release/${version}"
   },

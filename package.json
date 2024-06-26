@@ -1,6 +1,6 @@
 {
   "name": "electron-vue-vite",
-  "version": "0.0.1",
+  "version": "1.0.1",
   "main": "dist-electron/main/index.js",
   "description": "point of sale for desktop",
   "author": "Pedro Gomes",
@@ -36,6 +36,7 @@
     "vue-tsc": "^2.0.6"
   },
   "dependencies": {
+    "electron-log": "^5.1.5",
     "electron-updater": "^6.2.1",
     "vue-router": "^4.0.13"
   }
