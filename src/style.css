@@ -1,3 +1,5 @@
+/* define here global css from common components like <a> inputs forms cards menus etc and import colors from theme.css */
+
 .v-btn{
   background: #ED0280;
   color: aliceblue;
