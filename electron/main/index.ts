@@ -4,6 +4,8 @@ import { fileURLToPath } from 'url';
 import path from 'path';
 import os from 'os';
 import log from 'electron-log';
+import { authService } from '../services/authService';
+
 
 log.initialize();
 const appDirectory = path.dirname(app.getPath('exe'));
@@ -49,7 +51,7 @@ async function createWindow() {
     },
   })
 
-  if (VITE_DEV_SERVER_URL) { // #298
+  if (VITE_DEV_SERVER_URL) {
     win.loadURL(VITE_DEV_SERVER_URL)
     // Open devTool if the app is not packaged
     win.webContents.openDevTools()
@@ -142,4 +144,15 @@ function checkForUpdates() {
     log.info('Falha ao recuperar atualizações', e);
   }
 }
+
+// AUTH
+ipcMain.handle('auth-validate', async (event, args) => {
+  const isAuthenticated = await authService.validateAuthentication(args);
+  return isAuthenticated;
+});
+ipcMain.handle('auth-login', async (event, args) => {
+  const isAuthenticated = await authService.authenticate(args);
+  return isAuthenticated;
+});
+
 

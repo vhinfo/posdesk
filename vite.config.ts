@@ -4,6 +4,9 @@ import vue from '@vitejs/plugin-vue'
 import electron from 'vite-plugin-electron/simple'
 import pkg from './package.json'
 
+// https://github.com/vuetifyjs/vuetify-loader/tree/next/packages/vite-plugin
+import vuetify from 'vite-plugin-vuetify'
+
 // https://vitejs.dev/config/
 export default defineConfig(({ command }) => {
   fs.rmSync('dist-electron', { recursive: true, force: true })
@@ -15,6 +18,8 @@ export default defineConfig(({ command }) => {
   return {
     plugins: [
       vue(),
+      vuetify({
+      }),
       electron({
         main: {
           // Shortcut of `build.lib.entry`

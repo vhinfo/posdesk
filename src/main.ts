@@ -1,14 +1,14 @@
-import { createApp } from 'vue';
-import App from './App.vue';
-import router from './router'; // Importe o router que configuramos
-
+import { createApp } from 'vue'
+import App from './App.vue'
+import router from './router'
+import 'vuetify/dist/vuetify.min.css';
+import vuetify from './plugins/vuetify';
+import { loadFonts } from './plugins/webfontloader';
 import './style.css';
-import './demos/ipc';
 
-const app = createApp(App);
+loadFonts()
 
-app.use(router); // Use o router na sua aplicação
-
-app.mount('#app').$nextTick(() => {
-  postMessage({ payload: 'removeLoading' }, '*');
-});
+createApp(App)
+  .use(router)
+  .use(vuetify)
+  .mount('#app')

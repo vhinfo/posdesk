@@ -1,3 +1,13 @@
-window.ipcRenderer.on('main-process-message', (_event, ...args) => {
-    console.log('[Receive Main-process message]:', ...args)
-  })
+// authController.ts no Vue
+export const authController = {
+  async checkAuth() {
+    try {
+      const isAuthenticated = await window.authService.validateAuthentication();
+      console.log('Authentication result:', isAuthenticated);
+      return isAuthenticated;
+    } catch (error) {
+      console.error('Error during authentication:', error);
+      throw error;
+    }
+  },
+};
