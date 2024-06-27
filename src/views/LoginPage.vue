@@ -7,8 +7,8 @@
       <h2>Autenticação</h2>
       <form @submit.prevent="login" ref="form">
         <input
-          v-model="userTemp.email"
-          type="email"
+          v-model="userTemp.user"
+          type="text"
           placeholder="Usuário"
           required
         />
@@ -28,6 +28,8 @@
 
 <script lang="ts">
 import { defineComponent } from 'vue';
+import { login } from '../controllers/authController';
+import router from '../router';
 
 export default defineComponent({
   name: 'LoginPage',
@@ -35,7 +37,7 @@ export default defineComponent({
     return {
       passwordShow: false,
       userTemp: {
-        email: '',
+        user: '',
         password: '',
       },
     };
@@ -43,7 +45,12 @@ export default defineComponent({
   methods: {
     async login() {
       try {
-        // Aqui você pode implementar a lógica de autenticação
+        const user = await login(this.userTemp.user, this.userTemp.password);
+        if (user) {
+          router.push('/about');
+        } else {
+          console.error('Erro durante a autenticação: Usuário ou senha inválidos');
+        }
       } catch (error) {
         console.error('Erro durante a autenticação:', error);
       }
@@ -54,20 +61,20 @@ export default defineComponent({
 
 <style scoped>
 .login-page {
-  background-color: #121212; /* Cor de fundo escura */
-  color: #ffffff; /* Cor do texto */
-  height: 100vh; /* Altura total da tela */
+  background-color: #121212;
+  color: #ffffff;
+  height: 100vh;
   display: flex;
   justify-content: center;
   align-items: center;
 }
 
 .card {
-  background-color: #333; /* Cor de fundo do card */
+  background-color: #333;
   padding: 20px;
   border-radius: 8px;
   width: 80%;
-  max-width: 400px; /* Largura máxima do card */
+  max-width: 400px;
   text-align: center;
 }
 
@@ -82,8 +89,8 @@ input {
   margin-right: 10px;
   border: none;
   border-radius: 4px;
-  background-color: #555; /* Cor de fundo do input */
-  color: #ffffff; /* Cor do texto do input */
+  background-color: #555;
+  color: #ffffff;
 }
 
 button {
@@ -91,12 +98,12 @@ button {
   padding: 10px;
   border: none;
   border-radius: 4px;
-  background-color: #007bff; /* Cor de fundo do botão */
-  color: #ffffff; /* Cor do texto do botão */
+  background-color: #007bff;
+  color: #ffffff;
   cursor: pointer;
 }
 
 button:hover {
-  background-color: blueviolet; /* Cor de fundo do botão ao passar o mouse */
+  background-color: blueviolet;
 }
 </style>

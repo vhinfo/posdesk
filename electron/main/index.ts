@@ -5,6 +5,7 @@ import path from 'path';
 import os from 'os';
 import log from 'electron-log';
 import { authService } from '../services/authService';
+import { DatabaseService } from '../services/databaseService'; 
 
 
 log.initialize();
@@ -74,6 +75,9 @@ async function createWindow() {
 
 // app.whenReady().then(createWindow)
 app.whenReady().then(() => {
+  const Database = new DatabaseService();
+
+  
   log.info('verificando atualizações...')
   checkForUpdates()
   createWindow();

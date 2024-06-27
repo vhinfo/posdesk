@@ -1,30 +1,36 @@
-import fetch from 'electron-fetch';
+import fetch, { HeadersInit, RequestInit } from 'electron-fetch';
 
-export async function Authenticate(email, password) {
-    var requestOptions = {
-        method: 'GET',
-        headers: {
-            "Authorization": process.env.ERP_TOKEN,
-            "Content-Type": "application/json"
-        },
-        redirect: 'follow'
-    };
-
-    const url = `http://${process.env.ERP_URL}:${process.env.ERP_PORT}/auth/${email}/${password}`;
-
-    console.log("TRY LOGIN AS ", url);
-
-    try {
-        const response = await fetch(url, requestOptions);
-        if (!response.ok) {
-            throw new Error(`${response.status} - ${response.statusText}`);
-        }
-        const result = await response.json();
-        return result;
-    } catch (error) {
-        throw new Error('Authentication error: ' + error.message);
-    }
+interface AuthenticationResult {
+  accessToken: string;
+  // Outros campos conforme necessário
 }
+
+export async function authenticate(email: string, password: string): Promise<string> {
+  const headers: HeadersInit = {
+    "Authorization": process.env.ERP_TOKEN || '',
+    "Content-Type": "application/json"
+  };
+
+  const requestOptions: RequestInit = {
+    method: 'GET',
+    headers,
+    redirect: 'follow' // Redirecionamento configurado diretamente como string 'follow'
+  };
+
+  const url = `http://${process.env.ERP_URL}:${process.env.ERP_PORT}/auth/${encodeURIComponent(email)}/${encodeURIComponent(password)}`;
+
+  const response = await fetch(url, requestOptions);
+  if (!response.ok) {
+    throw new Error(`${response.status} - ${response.statusText}`);
+  }
+  const result = await response.json();
+  
+  return result.data as string;
+}
+
+
+
+
 
 
 
