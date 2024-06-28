@@ -11,8 +11,8 @@ export class User extends BaseEntity {
     cashierId: number;
     cashierName: string;
 
-    static tableName = 'users';
-    static fields = [
+    static readonly tableName = 'users';
+    static readonly fields = [
         { name: 'name', type: 'TEXT NOT NULL' },
         { name: 'login', type: 'TEXT NOT NULL UNIQUE' },
         { name: 'accessToken', type: 'TEXT NOT NULL' },

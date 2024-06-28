@@ -7,8 +7,8 @@ export class PaymentMethod extends BaseEntity {
     issue: boolean;
     icon: string;
 
-    static tableName = 'payments';
-    static fields = [
+    static readonly tableName = 'payments';
+    static readonly fields = [
         { name: 'description', type: 'TEXT NOT NULL' },
         { name: 'alias', type: 'TEXT NOT NULL UNIQUE' },
         { name: 'issue', type: 'INTEGER' },

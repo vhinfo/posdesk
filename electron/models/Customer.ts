@@ -8,8 +8,8 @@ export class Customer extends BaseEntity {
     phone: string;
     type: string;
 
-    static tableName = 'customers';
-    static fields = [
+    static readonly tableName = 'customers';
+    static readonly fields = [
         { name: 'document', type: 'TEXT NOT NULL UNIQUE' },
         { name: 'name', type: 'TEXT NOT NULL' },
         { name: 'email', type: 'TEXT' },

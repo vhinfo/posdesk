@@ -7,8 +7,8 @@ export class Salesman extends BaseEntity {
     phone: string;
     type: string;
 
-    static tableName = 'salesmans';
-    static fields = [
+    static readonly tableName = 'salesmans';
+    static readonly fields = [
         { name: 'name', type: 'TEXT NOT NULL' },
         { name: 'email', type: 'TEXT' },
         { name: 'phone', type: 'TEXT' },

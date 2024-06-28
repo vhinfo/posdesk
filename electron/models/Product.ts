@@ -10,8 +10,8 @@ export class Product extends BaseEntity {
     brand: string;
     price: number;
 
-    static tableName = 'products';
-    static fields = [
+    static readonly tableName = 'products';
+    static readonly fields = [
         { name: 'description', type: 'TEXT NOT NULL' },
         { name: 'sku', type: 'TEXT NOT NULL UNIQUE' },
         { name: 'categoryId', type: 'INTEGER' },

@@ -8,9 +8,8 @@ export class Store extends BaseEntity {
     groupId: number;
     groupName: string;
 
-    static tableName = 'stores';
-    static fields = [
-        { name: 'storeId', type: 'INTEGER PRIMARY KEY AUTOINCREMENT' },
+    static readonly tableName = 'stores';
+    static readonly fields = [
         { name: 'name', type: 'TEXT NOT NULL' },
         { name: 'type', type: 'TEXT' },
         { name: 'abbreviation', type: 'TEXT' },

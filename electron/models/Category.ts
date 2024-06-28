@@ -4,8 +4,8 @@ export class Category extends BaseEntity {
     id: number;
     name: string;
 
-    static tableName = 'categories';
-    static fields = [
+    static readonly tableName = 'categories';
+    static readonly fields = [
         { name: 'name', type: 'TEXT NOT NULL' }
     ];
 

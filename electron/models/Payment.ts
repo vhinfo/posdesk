@@ -8,8 +8,8 @@ export class Payment extends BaseEntity {
     methodValue: number;
     methodDate: Date;
 
-    static tableName = 'payments';
-    static fields = [
+    static readonly tableName = 'payments';
+    static readonly fields = [
         { name: 'methodId', type: 'INTEGER' },
         { name: 'methodDescription', type: 'TEXT NOT NULL' },
         { name: 'methodAlias', type: 'TEXT NOT NULL' },

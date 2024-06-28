@@ -12,9 +12,8 @@ export class Discount extends BaseEntity {
     quantity: number | null;
     sku: string;
 
-    static tableName = 'discounts';
-    static fields = [
-        { name: 'id', type: 'INTEGER PRIMARY KEY AUTOINCREMENT' },
+    static readonly tableName = 'discounts';
+    static readonly fields = [
         { name: 'withClient', type: 'TEXT' },
         { name: 'code', type: 'TEXT NOT NULL UNIQUE' },
         { name: 'description', type: 'TEXT' },

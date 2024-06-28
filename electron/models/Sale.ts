@@ -4,7 +4,7 @@ import { Cashier } from './Cashier';
 import { User } from './User';
 import { Customer } from './Customer';
 import { Salesman } from './Salesman';
-import { Payment } from './PaymentMethod';
+import { Payment } from './Payment';
 import { Product } from './Product';
 import { Discount } from './Discount';
 
@@ -24,7 +24,7 @@ export class Sale extends BaseEntity {
     employeeCashier: User;
     employeeSale: boolean;
     obs: string;
-    sysObs: any; // Assuming sysObs is of type any due to lack of specific structure in JSON
+    sysObs: string; 
     productsValue: number;
     paymentsValue: number;
     discountValue: number;
@@ -35,16 +35,16 @@ export class Sale extends BaseEntity {
     invoiceCoupon: string;
     invoiceXml: string;
     customer: Customer;
-    salesman: Salesman; // Assuming salesman can be any structure
+    salesman: Salesman;
     payments: Payment[];
     items: Product[];
     discounts: Discount[];
-    nfceNumber: string; // Assuming nfceNumber can be a string based on JSON example
+    nfceNumber: string; 
     nfceCoupon: string;
     status: string;
 
-    static tableName = 'sales';
-    static fields = [
+    static readonly tableName = 'sales';
+    static readonly fields = [
         { name: 'changeValue', type: 'REAL' },
         { name: 'reProcess', type: 'INTEGER' },
         { name: 'qtdItems', type: 'INTEGER' },
@@ -76,7 +76,7 @@ export class Sale extends BaseEntity {
         re_process: boolean;
         qtd_items: number;
         qtd_payments: number;
-        forceCustomer: boolean;
+        force_customer: boolean;
         payment_method: number;
         valid_sale: boolean;
         number: string;
@@ -86,7 +86,7 @@ export class Sale extends BaseEntity {
         employee_cashier: User;
         employee_sale: boolean;
         obs: string;
-        sys_obs: any;
+        sys_obs: string;
         products_value: number;
         payments_value: number;
         discount_value: number;
@@ -119,7 +119,7 @@ export class Sale extends BaseEntity {
         this.reProcess = saleData.re_process;
         this.qtdItems = saleData.qtd_items;
         this.qtdPayments = saleData.qtd_payments;
-        this.forceCustomer = saleData.forceCustomer;
+        this.forceCustomer = saleData.force_customer;
         this.paymentMethod = saleData.payment_method;
         this.validSale = saleData.valid_sale;
         this.number = saleData.number;

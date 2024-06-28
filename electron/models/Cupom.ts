@@ -6,7 +6,7 @@ export class Cupom extends BaseEntity {
     code: string;
     value: number;
     active: boolean;
-    default: boolean; 
+    defaultCupom: boolean; 
     description: string;
     allProducts: boolean;
     percent: boolean;
@@ -17,13 +17,13 @@ export class Cupom extends BaseEntity {
     endDate: Date;
     customerId: number;
 
-    static tableName = 'cupom'; 
-    static fields = [
+    static readonly tableName = 'cupom'; 
+    static readonly fields = [
         { name: 'label', type: 'TEXT NOT NULL' },
         { name: 'code', type: 'TEXT NOT NULL UNIQUE' },
         { name: 'value', type: 'REAL NOT NULL' },
         { name: 'active', type: 'INTEGER' },
-        { name: 'default', type: 'INTEGER' },
+        { name: 'defaultCupom', type: 'INTEGER' },
         { name: 'description', type: 'TEXT' },
         { name: 'allProducts', type: 'INTEGER' },
         { name: 'percent', type: 'INTEGER' },
@@ -41,7 +41,7 @@ export class Cupom extends BaseEntity {
         code: string,
         value: number,
         active: boolean,
-        default: boolean,
+        defaultCupom: boolean,
         description: string,
         allProducts: boolean,
         percent: boolean,
@@ -58,7 +58,7 @@ export class Cupom extends BaseEntity {
         this.code = cupomData.code;
         this.value = cupomData.value;
         this.active = cupomData.active;
-        this.default = cupomData.default;
+        this.defaultCupom = cupomData.defaultCupom;
         this.description = cupomData.description;
         this.allProducts = cupomData.allProducts;
         this.percent = cupomData.percent;
