@@ -1,10 +1,15 @@
 import { createRouter, createWebHistory, RouteRecordRaw } from 'vue-router'
 import LoginPage from '../views/LoginPage.vue'
+import StoreSelectPage from '../views/StoreSelectPage.vue'
+import CashierPage from '../views/CashierPage.vue'
+import About from '../views/About.vue'
 
-console.log("TESTE NO ROUTER");
 const routes: Array<RouteRecordRaw> = [
   { path: '/login', name: 'Home', component: LoginPage },
-  { path: '/about', name: 'About', component: () => import('../views/About.vue')}
+  { path: '/store-selection', name: 'StoreSelect', component: StoreSelectPage},
+  { path: '/about', name: 'About', component: About},
+  { path: '/', name: 'Cashier', component: CashierPage},
+
 ]
 
 const router = createRouter({

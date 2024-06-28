@@ -50,7 +50,10 @@ async function createWindow() {
     webPreferences: {
       preload,
     },
+    autoHideMenuBar: true 
   })
+
+  win.maximize(); 
 
   if (VITE_DEV_SERVER_URL) {
     win.loadURL(VITE_DEV_SERVER_URL)
@@ -75,12 +78,16 @@ async function createWindow() {
 
 // app.whenReady().then(createWindow)
 app.whenReady().then(() => {
-  const Database = new DatabaseService();
-
-  
   log.info('verificando atualizações...')
   checkForUpdates()
-  createWindow();
+
+  log.info('iniciando database...')
+  DatabaseService.initialize().then(() => {
+    log.info('Database pronto, criando janela...');
+    createWindow();
+  }).catch(err => {
+    log.error('Erro ao inicializar o banco de dados:', err);
+  });
 });
 
 setInterval(() => {
@@ -154,8 +161,8 @@ ipcMain.handle('auth-validate', async (event, args) => {
   const isAuthenticated = await authService.validateAuthentication(args);
   return isAuthenticated;
 });
-ipcMain.handle('auth-login', async (event, args) => {
-  const isAuthenticated = await authService.authenticate(args);
+ipcMain.handle('auth-login', async (event, user, password) => {
+  const isAuthenticated = await authService.authenticate(user, password);
   return isAuthenticated;
 });
 

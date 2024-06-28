@@ -1,6 +1,6 @@
 // src/controllers/authController.ts
 
-export async function validateAuth(args: any): Promise<boolean> {
+export async function validateAuth(): Promise<boolean> {
   return window.authService.validateAuthentication();
 }
 

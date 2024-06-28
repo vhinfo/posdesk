@@ -1,0 +1,11 @@
+/* colors.css */
+:root {
+    --primary-color: #ED0280;
+    --secondary-color: #FFFFFF;
+    --background-color: #121212;
+    --text-color: #FFFFFF;
+    --card-background-color: #1E1E1E;
+    --link-color: #ED0280;
+    --link-hover-color: #FF4081;
+  }
+  

@@ -1,18 +1,15 @@
 <template>
-  <hello-world />
+  TESTE STORE SELECT
 </template>
 
 <script lang="ts">
 import { defineComponent } from 'vue';
 
-// Components
-import HelloWorld from '../components/HelloWorld.vue';
-
 export default defineComponent({
-  name: 'HomeView',
+  name: 'StoreSelectPage',
 
   components: {
-    HelloWorld,
+
   },
 });
 </script>

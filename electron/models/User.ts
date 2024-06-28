@@ -1,4 +1,5 @@
 import { BaseEntity } from './BaseEntity';
+import sqlite3 from 'sqlite3';
 
 export class User extends BaseEntity {
     id: number;
@@ -23,7 +24,7 @@ export class User extends BaseEntity {
         { name: 'cashierName', type: 'TEXT' }
     ];
 
-    constructor(userData: {
+    constructor(db: sqlite3.Database, userData: {
         id: number,
         name: string,
         login: string,
@@ -34,7 +35,7 @@ export class User extends BaseEntity {
         cashierId: number,
         cashierName: string
     }) {
-        super();
+        super(db);
         this.id = userData.id;
         this.name = userData.name;
         this.login = userData.login;
@@ -45,4 +46,34 @@ export class User extends BaseEntity {
         this.cashierId = userData.cashierId;
         this.cashierName = userData.cashierName;
     }
+
+    public static async getFirstUser(db: sqlite3.Database): Promise<User | null> {
+        return new Promise((resolve, reject) => {
+            const query = `SELECT * FROM ${User.tableName} LIMIT 1`;
+            db.get(query, (err, row:any) => {
+                if (err) {
+                    console.error(`Error fetching first ${User.tableName}:`, err);
+                    reject(err);
+                } else {
+                    if (row) {
+                        const user = new User(db, {
+                            id: row.id,
+                            name: row.name,
+                            login: row.login,
+                            accessToken: row.accessToken,
+                            profession: row.profession,
+                            isManager: row.isManager === 1,
+                            image: row.image,
+                            cashierId: row.cashierId,
+                            cashierName: row.cashierName
+                        });
+                        resolve(user);
+                    } else {
+                        resolve(null);
+                    }
+                }
+            });
+        });
+    }
+
 }

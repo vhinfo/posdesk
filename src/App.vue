@@ -1,11 +1,6 @@
 <template>
   <div class="app">
-    <nav>
-      <ul>
-        <li><router-link to="/login">Login Page</router-link></li>
-        <li><router-link to="/about">About Page</router-link></li>
-      </ul>
-    </nav>
+    <SideMenuBar v-if="showSidebar" />
     <main>
       <router-view />
     </main>
@@ -13,53 +8,51 @@
 </template>
 
 <script lang="ts">
-import { defineComponent } from 'vue';
+import { defineComponent, computed, onMounted } from 'vue';
+import { useRoute, useRouter } from 'vue-router';
+import SideMenuBar from './views/components/sysComponents/SideMenuBar.vue';
+import { validateAuth } from './controllers/authController'; // Importe sua função de validação de autenticação aqui
 
 export default defineComponent({
   name: 'App',
-  
+  components: {
+    SideMenuBar
+  },
+  setup() {
+    const router = useRouter();
+    const route = useRoute();
+    console.log(route.path);
+
+    // Função para verificar o status de autenticação
+    const checkLogin = async () => {
+      const isAuthenticated = await validateAuth(); // Chama a função de validação de autenticação
+      if (isAuthenticated) {
+        router.replace('/'); // Redireciona para a rota principal se autenticado
+      } else {
+        router.replace('/login'); // Redireciona para a página de login se não autenticado
+      }
+    };
+
+    // Executa a verificação ao montar o componente
+    onMounted(() => {
+      checkLogin();
+    });
+
+    // Computação para exibir ou não o sidebar com base na rota
+    const showSidebar = computed(() => {
+      return route.path !== '/login' && route.path !== '/store-selection';
+    });
+
+    return {
+      showSidebar
+    };
+  }
 });
 </script>
 
 <style scoped>
-.app {
-  background-color: #df0eb1; /* Cor de fundo */
-  color: #ffffff; /* Cor do texto */
-  height: 100vh; /* Altura total da tela */
-  display: flex;
-  flex-direction: column;
-  justify-content: flex-start;
-  align-items: center;
-}
-
-nav {
-  background-color: #333;
-  width: 100%;
-  padding: 10px 20px;
-  box-sizing: border-box;
-}
-
-nav ul {
-  list-style: none;
-  padding: 0;
-  display: flex;
-  justify-content: center;
-}
-
-nav ul li {
-  margin: 0 15px;
-}
-
-nav ul li a {
-  color: #ffffff;
-  text-decoration: none;
-}
-
+/* Estilos específicos do componente App.vue */
 main {
-  width: 100%;
-  max-width: 600px; /* Largura máxima para conteúdo centralizado */
-  padding: 20px;
-  box-sizing: border-box;
-  text-align: center;
+  background-color: antiquewhite;
 }
 </style>

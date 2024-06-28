@@ -1,26 +1,25 @@
 import sqlite3 from 'sqlite3';
-import path from 'path';
 
-// const dbFile = path.join(__dirname, 'database/db.sqlite'); // Caminho para o arquivo SQLite
+export abstract class BaseEntity {
+    protected db: sqlite3.Database;
 
-const sqlite = sqlite3.verbose();
-// const db = new sqlite.Database(dbFile);
-
-export class BaseEntity {
+    constructor(db: sqlite3.Database) {
+        this.db = db;
+    }
 
     async save(): Promise<void> {
         console.log('Saved entity:', this);
-        // Implementar lógica real de salvar no banco de dados aqui
+        // Implemente aqui a lógica real de salvar no banco de dados usando 'this.db'
     }
 
     async update(): Promise<void> {
         console.log('Updated entity:', this);
-        // Implementar lógica real de atualizar no banco de dados aqui
+        // Implemente aqui a lógica real de atualizar no banco de dados usando 'this.db'
     }
 
     async delete(): Promise<void> {
         console.log('Deleted entity:', this);
-        // Implementar lógica real de deletar no banco de dados aqui
+        // Implemente aqui a lógica real de deletar no banco de dados usando 'this.db'
     }
 
     public static createSQLCreateTable(tableName: string, fields: { name: string, type: string }[]) {
@@ -32,5 +31,4 @@ export class BaseEntity {
         `;
         return createTableSQL;
     }
-    
 }

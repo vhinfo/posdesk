@@ -1,21 +1,39 @@
 import { authenticate } from './api/authApi';
 import { User } from '../models/User';
+import { DatabaseService } from '../services/databaseService';
 
 export const authService = {
   async validateAuthentication(args: any): Promise<boolean> {
-    // Implemente sua lógica real de validação de autenticação aqui
-    return true;
+    try {
+      let user = await User.getFirstUser(DatabaseService.getDBInstance());
+      if(null === user){
+        return false;
+      }
+      
+      console.log("TOKEN FROM USER", user?.accessToken);
+      return true; // Aqui você deve implementar a lógica de validação de autenticação
+  } catch (error) {
+      console.error('Erro ao validar autenticação:', error);
+      return false;
+  }
   },
-  // async authenticate(args: any): Promise<User> {
-  //   let token = await authenticate('admin','senha aleatoria');
-  //   auth getFirstconfigs
+  async authenticate(user:string, password:string): Promise<any> {
+    // let token = await authenticate(user,password);
     
-  //   let user = new User(null,'','','token');
-  //   return user;
-  // },
-  async authenticate(args: any) {
-    // let token = await authenticate('admin','senha aleatoria');
-    // let user = new User();
-    return '';
+    
+    // let currentUser = new User(
+    //   {
+    //     id: 1,
+    //     name: 'teste',
+    //     login: 'teste',
+    //     accessToken: token,
+    //     profession: 'testador',
+    //     isManager: true,
+    //     image: '',
+    //     cashierId: 1,
+    //     cashierName: 'teste'
+    //   }
+    // );
+    return null;
   },
 };
