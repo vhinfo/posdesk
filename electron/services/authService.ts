@@ -13,9 +13,9 @@ export const authService = {
   //   let user = new User(null,'','','token');
   //   return user;
   // },
-  async authenticate(args: any): Promise<User> {
+  async authenticate(args: any) {
     // let token = await authenticate('admin','senha aleatoria');
-    let user = new User(null,'','','teste');
-    return user;
+    // let user = new User();
+    return '';
   },
 };

@@ -1,9 +1,9 @@
-// src/router/index.ts
 import { createRouter, createWebHistory, RouteRecordRaw } from 'vue-router'
-import Home from '../views/LoginPage.vue'
+import LoginPage from '../views/LoginPage.vue'
 
+console.log("TESTE NO ROUTER");
 const routes: Array<RouteRecordRaw> = [
-  { path: '/', name: 'Home', component: Home },
+  { path: '/login', name: 'Home', component: LoginPage },
   { path: '/about', name: 'About', component: () => import('../views/About.vue')}
 ]
 

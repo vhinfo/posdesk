@@ -16,10 +16,7 @@ import { PaymentMethod } from '../models/PaymentMethod';
 import { Sale } from '../models/Sale';
 import { Salesman } from '../models/Salesman';
 
-const __filename = fileURLToPath(import.meta.url);
-const __dirname = path.dirname(__filename);
-
-const dbFilePath = path.join(__dirname, '../db.sqlite');
+const dbFilePath = path.join(process.cwd(), 'db.sqlite');
 const sqlite = sqlite3.verbose();
 let db: sqlite3.Database;
 

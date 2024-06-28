@@ -7,6 +7,10 @@ declare module '*.vue' {
 }
 
 interface Window {
-  // expose in the `electron/preload/index.ts`
-  ipcRenderer: import('electron').IpcRenderer
+  // Expose in the `electron/preload/index.ts`
+  ipcRenderer: import('electron').IpcRenderer,
+  authService: {
+    validateAuthentication: () => Promise<boolean>,
+    authenticate: (username: string, password: string) => Promise<any>
+  }
 }

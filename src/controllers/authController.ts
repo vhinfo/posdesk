@@ -1,10 +1,9 @@
-// authController.ts no Vue
-export async function checkAuth() {
-  const isAuthenticated = await window.authService.validateAuthentication();
-  return isAuthenticated;
+// src/controllers/authController.ts
+
+export async function validateAuth(args: any): Promise<boolean> {
+  return window.authService.validateAuthentication();
 }
 
-export async function login(email: string, password: string) {
-  const isAuthenticated = await window.authService.authenticate(email, password);
-  return isAuthenticated;
+export async function login(user:string, password:string): Promise<any> {
+  return window.authService.authenticate(user, password);
 }

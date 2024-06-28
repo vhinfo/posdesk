@@ -1,4 +1,5 @@
 <template>
+  TESTE LOGIN PAGE
   <div class="login-page">
     <div class="card">
       <div class="avatar">

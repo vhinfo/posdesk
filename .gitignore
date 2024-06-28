@@ -31,3 +31,4 @@ yarn.lock
 
 #variables
 .env
+db.sqlite

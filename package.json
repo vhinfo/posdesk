@@ -6,26 +6,24 @@
   "author": "Pedro Gomes",
   "scripts": {
     "serve": "vite preview",
-    "build": "vite build",
+    "build": "vue-tsc --noEmit && vite build && electron-builder",
     "dev": "vite",
     "preview": "vite preview"
   },
   "main": "dist-electron/main/index.js",
   "dependencies": {
     "@mdi/font": "5.9.55",
-    "dotenv": "^16.4.5",
+    "@types/node": "^20.14.9",
     "electron-log": "^5.1.5",
     "electron-updater": "^6.2.1",
     "roboto-fontface": "*",
-    "sqlite3": "^5.1.7",
-    "vue-router": "^4.0.13",
+    "sqlite3": "5.1.6",
+    "vue-router": "^4.4.0",
     "webfontloader": "^1.0.0"
   },
   "devDependencies": {
-    "@types/electron": "^1.6.10",
-    "@types/node": "^20.14.9",
     "@types/sqlite3": "^3.1.11",
-    "@types/webfontloader": "^1.0.0",
+    "@types/webfontloader": "^1.6.38",
     "@vitejs/plugin-vue": "^5.0.4",
     "electron": "^29.1.1",
     "electron-builder": "^24.13.3",
