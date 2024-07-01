@@ -44,7 +44,7 @@ export class Sale extends BaseEntity {
     nfceCoupon: string;
     status: string;
 
-    static readonly tableName = this.name;
+    static readonly tableName: string = 'sales';
     static readonly fields = [
         { name: 'changeValue', type: 'REAL' },
         { name: 'reProcess', type: 'INTEGER' },
@@ -71,7 +71,7 @@ export class Sale extends BaseEntity {
         { name: 'status', type: 'TEXT' }
     ];
 
-    constructor(db: sqlite3.Database, saleData: {
+    constructor(db: sqlite3.Database, entityData: {
         id: number;
         change_value: number;
         re_process: boolean;
@@ -115,38 +115,11 @@ export class Sale extends BaseEntity {
         };
     }) {
         super(db);
-        this.id = saleData.id;
-        this.changeValue = saleData.change_value;
-        this.reProcess = saleData.re_process;
-        this.qtdItems = saleData.qtd_items;
-        this.qtdPayments = saleData.qtd_payments;
-        this.forceCustomer = saleData.force_customer;
-        this.paymentMethod = saleData.payment_method;
-        this.validSale = saleData.valid_sale;
-        this.number = saleData.number;
-        this.saleDate = saleData.sale_date;
-        this.store = saleData.store;
-        this.cashier = saleData.cashier;
-        this.employeeCashier = saleData.employee_cashier;
-        this.employeeSale = saleData.employee_sale;
-        this.obs = saleData.obs;
-        this.sysObs = saleData.sys_obs;
-        this.productsValue = saleData.products_value;
-        this.paymentsValue = saleData.payments_value;
-        this.discountValue = saleData.discount_value;
-        this.totalValue = saleData.total_value;
-        this.invoice = saleData.invoice;
-        this.invoiceSerie = saleData.invoice_serie;
-        this.invoiceNumber = saleData.invoice_number;
-        this.invoiceCoupon = saleData.invoice_coupon;
-        this.invoiceXml = saleData.invoice_xml;
-        this.customer = saleData.customer;
-        this.salesman = saleData.salesman;
-        this.payments = saleData.payments;
-        this.items = saleData.items;
-        this.discounts = saleData.discounts;
-        this.nfceNumber = saleData.nfce.number;
-        this.nfceCoupon = saleData.nfce.coupon;
-        this.status = saleData.status.status_description;
+        Object.assign(this, entityData);
     }
+
+    get tableName(): string {
+        return Sale.tableName;
+    }
+
 }

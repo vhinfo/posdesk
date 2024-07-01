@@ -11,7 +11,7 @@ export class Product extends BaseEntity {
     brand: string;
     price: number;
 
-    static readonly tableName = this.name;
+    static readonly tableName: string = 'products';
     static readonly fields = [
         { name: 'description', type: 'TEXT NOT NULL' },
         { name: 'sku', type: 'TEXT NOT NULL UNIQUE' },
@@ -22,7 +22,7 @@ export class Product extends BaseEntity {
         { name: 'price', type: 'REAL' }
     ];
 
-    constructor(db: sqlite3.Database, productData: {
+    constructor(db: sqlite3.Database, entityData: {
         id: number,
         description: string,
         sku: string,
@@ -33,13 +33,11 @@ export class Product extends BaseEntity {
         price: number
     }) {
         super(db);
-        this.id = productData.id;
-        this.description = productData.description;
-        this.sku = productData.sku;
-        this.categoryId = productData.categoryId;
-        this.categoryName = productData.categoryName;
-        this.image = productData.image;
-        this.brand = productData.brand;
-        this.price = productData.price;
+        Object.assign(this, entityData);
     }
+
+    get tableName(): string {
+        return Product.tableName;
+    }
+
 }

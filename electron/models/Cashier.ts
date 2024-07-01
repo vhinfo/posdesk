@@ -2,26 +2,33 @@ import { BaseEntity } from './BaseEntity';
 import sqlite3 from 'sqlite3';
 
 export class Cashier extends BaseEntity {
+    id: number
     name: string;
     storeId: string;
-    systemUser: { userId: number, userName: string };
+    userId: number; 
+    userName: string;
 
-    static readonly tableName = this.name;
+    static readonly tableName: string = 'cashiers';
     static readonly fields = [
         { name: 'name', type: 'TEXT NOT NULL' },
         { name: 'storeId', type: 'TEXT' },
-        { name: 'systemUser', type: 'JSON' }
+        { name: 'userId', type: 'INTEGER' },
+        { name: 'userName', type: 'TEXT' }
     ];
 
-    constructor(db: sqlite3.Database, cashierData: {
+    constructor(db: sqlite3.Database, entityData: {
         id: number,
         name: string,
         storeId: string,
-        systemUser: { userId: number, userName: string }
+        userId: number, 
+        userName: string
     }) {
         super(db);
-        this.name = cashierData.name;
-        this.storeId = cashierData.storeId;
-        this.systemUser = cashierData.systemUser;
+        Object.assign(this, entityData);
     }
+
+    get tableName(): string {
+        return Cashier.tableName
+    }
+
 }

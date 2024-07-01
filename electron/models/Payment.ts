@@ -9,7 +9,7 @@ export class Payment extends BaseEntity {
     methodValue: number;
     methodDate: Date;
 
-    static readonly tableName = this.name;
+    static readonly tableName: string = 'payments';
     static readonly fields = [
         { name: 'methodId', type: 'INTEGER' },
         { name: 'methodDescription', type: 'TEXT NOT NULL' },
@@ -19,7 +19,7 @@ export class Payment extends BaseEntity {
         { name: 'methodDate', type: 'TEXT NOT NULL' }
     ];
 
-    constructor(db: sqlite3.Database, paymentData: {
+    constructor(db: sqlite3.Database, entityData: {
         method_id: number;
         method_description: string;
         method_alias: string;
@@ -28,11 +28,11 @@ export class Payment extends BaseEntity {
         method_date: Date;
     }) {
         super(db);
-        this.methodId = paymentData.method_id;
-        this.methodDescription = paymentData.method_description;
-        this.methodAlias = paymentData.method_alias;
-        this.methodIssue = paymentData.method_issue;
-        this.methodValue = paymentData.method_value;
-        this.methodDate = paymentData.method_date;
+        Object.assign(this, entityData);
     }
+
+    get tableName(): string {
+        return Payment.tableName;
+    }
+
 }

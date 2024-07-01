@@ -8,7 +8,7 @@ export class Salesman extends BaseEntity {
     phone: string;
     type: string;
 
-    static readonly tableName = this.name;
+    static readonly tableName: string = 'salesmans';
     static readonly fields = [
         { name: 'name', type: 'TEXT NOT NULL' },
         { name: 'email', type: 'TEXT' },
@@ -16,7 +16,7 @@ export class Salesman extends BaseEntity {
         { name: 'type', type: 'TEXT' }
     ];
 
-    constructor(db: sqlite3.Database, customerData: {
+    constructor(db: sqlite3.Database, entityData: {
         id: number,
         name: string,
         email: string,
@@ -24,10 +24,11 @@ export class Salesman extends BaseEntity {
         type: string
     }) {
         super(db);
-        this.id = customerData.id;
-        this.name = customerData.name;
-        this.email = customerData.email;
-        this.phone = customerData.phone;
-        this.type = customerData.type;
+        Object.assign(this, entityData);
     }
+
+    get tableName(): string {
+        return Salesman.tableName;
+    }
+
 }

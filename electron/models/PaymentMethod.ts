@@ -8,15 +8,15 @@ export class PaymentMethod extends BaseEntity {
     issue: boolean;
     icon: string;
 
-    static readonly tableName = this.name;
+    static readonly tableName: string = 'payment_methods';
     static readonly fields = [
         { name: 'description', type: 'TEXT NOT NULL' },
-        { name: 'alias', type: 'TEXT NOT NULL UNIQUE' },
+        { name: 'alias', type: 'TEXT NOT NULL' },
         { name: 'issue', type: 'INTEGER' },
         { name: 'icon', type: 'TEXT' }
     ];
 
-    constructor(db: sqlite3.Database,paymentData: {
+    constructor(db: sqlite3.Database,entityData: {
         id: number,
         description: string,
         alias: string,
@@ -24,10 +24,11 @@ export class PaymentMethod extends BaseEntity {
         icon: string
     }) {
         super(db);
-        this.id = paymentData.id;
-        this.description = paymentData.description;
-        this.alias = paymentData.alias;
-        this.issue = paymentData.issue;
-        this.icon = paymentData.icon;
+        Object.assign(this, entityData);
     }
+
+    get tableName(): string {
+        return PaymentMethod.tableName;
+    }
+
 }

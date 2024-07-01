@@ -13,7 +13,7 @@ export class Discount extends BaseEntity {
     quantity: number | null;
     sku: string;
 
-    static readonly tableName = this.name;
+    static readonly tableName: string = 'discounts';
     static readonly fields = [
         { name: 'withClient', type: 'TEXT' },
         { name: 'code', type: 'TEXT NOT NULL UNIQUE' },
@@ -26,7 +26,7 @@ export class Discount extends BaseEntity {
         { name: 'sku', type: 'TEXT' }
     ];
 
-    constructor(db: sqlite3.Database, discountData: {
+    constructor(db: sqlite3.Database, entityData: {
         id: number,
         with_client: string,
         code: string,
@@ -39,15 +39,11 @@ export class Discount extends BaseEntity {
         sku: string
     }) {
         super(db);
-        this.id = discountData.id;
-        this.withClient = discountData.with_client;
-        this.code = discountData.code;
-        this.description = discountData.description;
-        this.value = discountData.value;
-        this.allProducts = discountData.all_products;
-        this.accumulate = discountData.accumulate;
-        this.percent = discountData.percent;
-        this.quantity = discountData.quantity;
-        this.sku = discountData.sku;
+        Object.assign(this, entityData);
     }
+
+    get tableName(): string {
+        return Discount.tableName;
+    }
+
 }

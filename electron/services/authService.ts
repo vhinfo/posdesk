@@ -5,21 +5,16 @@ import { Store } from '../models/Store.js';
 import { Cashier } from '../models/Cashier.js';
 import { PaymentMethod } from '../models/PaymentMethod.js';
 import { Cupom } from '../models/Cupom.js';
+import { BaseEntity } from '../models/BaseEntity.js';
 
 export const authService = {
   async validateAuthentication(args: any): Promise<boolean> {
-    try {
-      const user = await User.getFirstUser(DatabaseService.getDBInstance());
-      if (!user) {
-        return false;
-      }
-
-      console.log("TOKEN FROM USER", user?.accessToken);
-      return true; // Aqui você deve implementar a lógica de validação de autenticação
-    } catch (error) {
-      console.error('Erro ao validar autenticação:', error);
+    const user = await User.getFirstUser(DatabaseService.getDBInstance());
+    if (!user) {
       return false;
     }
+
+    return true;
   },
 
   async authenticate(user: string, password: string): Promise<boolean> {
@@ -29,7 +24,6 @@ export const authService = {
     let store = await this.createStore(firstconfigs);
     let payment = await this.createPaymentMethod(firstconfigs);
     let cupom = await this.createCupom(firstconfigs);
-    console.group('configs', firstconfigs);
     
     return true;
   },
@@ -74,11 +68,8 @@ export const authService = {
       id: cashierResponse.cashier_id,
       name: cashierResponse.cashier_name,
       storeId: cashierResponse.cashier_store,
-      systemUser: 
-        { 
-          userId: cashierResponse.system_user.user_id, 
-          userName: cashierResponse.system_user.user_name 
-        }
+      userId: cashierResponse.system_user.user_id, 
+      userName: cashierResponse.system_user.user_name
     });
 
     await cashier.save();
@@ -127,10 +118,17 @@ export const authService = {
         customerId: cupon.customer_id
       });
 
-      await cupom.save();
-      copons.push(cupom);
+      const baseCupom = await BaseEntity.findBy(DatabaseService.getDBInstance(), Cupom.tableName, [['code', '=', cupom.code]]);
+      if (baseCupom.length === 0) {
+        await cupom.save();
+        copons.push(cupom);
+      } else {
+        cupom.id = baseCupom[0].id;
+        await cupom.update();
+      }
     }
 
     return copons;
   }
+
 };

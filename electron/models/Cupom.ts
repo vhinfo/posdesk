@@ -18,7 +18,7 @@ export class Cupom extends BaseEntity {
     endDate: Date;
     customerId: number;
 
-    static readonly tableName = this.name;
+    static readonly tableName: string = 'cupons';
     static readonly fields = [
         { name: 'label', type: 'TEXT NOT NULL' },
         { name: 'code', type: 'TEXT NOT NULL UNIQUE' },
@@ -36,7 +36,7 @@ export class Cupom extends BaseEntity {
         { name: 'customerId', type: 'INTEGER' }
     ];
 
-    constructor(db: sqlite3.Database, cupomData: {
+    constructor(db: sqlite3.Database, entityData: {
         id: number,
         label: string,
         code: string,
@@ -54,20 +54,11 @@ export class Cupom extends BaseEntity {
         customerId: number
     }) {
         super(db);
-        this.id = cupomData.id;
-        this.label = cupomData.label;
-        this.code = cupomData.code;
-        this.value = cupomData.value;
-        this.active = cupomData.active;
-        this.defaultCupom = cupomData.defaultCupom;
-        this.description = cupomData.description;
-        this.allProducts = cupomData.allProducts;
-        this.percent = cupomData.percent;
-        this.accumulate = cupomData.accumulate;
-        this.quantity = cupomData.quantity;
-        this.withValidate = cupomData.withValidate;
-        this.startDate = cupomData.startDate;
-        this.endDate = cupomData.endDate;
-        this.customerId = cupomData.customerId;
+        Object.assign(this, entityData);
     }
+
+    get tableName(): string {
+        return Cupom.tableName;
+    }
+
 }

@@ -11,9 +11,9 @@ export class User extends BaseEntity {
     cashierId: number;
     cashierName: string;
 
-    static readonly tableName = this.name;
+    public static readonly tableName: string = 'users';
     static readonly fields = [
-        { name: 'name', type: 'TEXT NOT NULL' },
+        { name: 'name', type: 'TEXT' },
         { name: 'accessToken', type: 'TEXT NOT NULL' },
         { name: 'profession', type: 'TEXT' },
         { name: 'isManager', type: 'INTEGER' },
@@ -22,7 +22,7 @@ export class User extends BaseEntity {
         { name: 'cashierName', type: 'TEXT' }
     ];
 
-    constructor(db: sqlite3.Database, userData: {
+    constructor(db: sqlite3.Database, entityData: {
         id: number,
         name: string,
         accessToken: string,
@@ -33,19 +33,17 @@ export class User extends BaseEntity {
         cashierName: string
     }) {
         super(db);
-        this.id = userData.id;
-        this.name = userData.name;
-        this.accessToken = userData.accessToken;
-        this.profession = userData.profession;
-        this.isManager = userData.isManager;
-        this.image = userData.image;
-        this.cashierId = userData.cashierId;
-        this.cashierName = userData.cashierName;
+        Object.assign(this, entityData);
     }
+
+    get tableName(): string {
+        return User.tableName;
+    }
+
 
     public static async getFirstUser(db: sqlite3.Database): Promise<User | null> {
         return new Promise((resolve, reject) => {
-            const query = `SELECT * FROM ${User.tableName} LIMIT 1`;
+            const query = `SELECT * FROM ${User.tableName} LIMIT 1`; // Acessando tableName através de User.tableName
             db.get(query, (err, row:any) => {
                 if (err) {
                     console.error(`Error fetching first ${User.tableName}:`, err);
@@ -71,4 +69,5 @@ export class User extends BaseEntity {
         });
     }
 
+    
 }

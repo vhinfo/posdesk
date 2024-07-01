@@ -7,45 +7,72 @@ export abstract class BaseEntity {
         this.db = db;
     }
 
+    abstract get tableName(): string;
+
     async save(): Promise<void> {
-        console.log('Saved entity:', this);
-        // Implemente aqui a lógica real de salvar no banco de dados usando 'this.db'
-        // Exemplo básico de inserção
-        const sql = `INSERT INTO ${this.constructor.name} (${Object.keys(this).join(', ')}) VALUES (${Object.values(this).map(value => `'${value}'`).join(', ')})`;
-        await this.run(sql);
+        const { db, ...entityData } = this;
+        const columns = Object.keys(entityData).join(', ');
+        const values = Object.values(entityData).map(value => {
+            if (typeof value === 'string') {
+                return `'${value}'`;
+            } else {
+                return value === null || value === undefined || value === '' ? 'NULL' : value;
+            }
+        }).join(', ');
+
+        if (await this.exists(this['id'])) {
+            await this.update();
+        } else {
+            const sql = `INSERT INTO ${this.tableName} (${columns}) VALUES (${values})`;
+            await this.run(sql);
+        }
+    }
+
+    private async exists(id: number | undefined): Promise<boolean> {
+        if (!id) return false;
+        const sql = `SELECT 1 FROM ${this.tableName} WHERE id = ${id} LIMIT 1`;
+        const result = await this.get(sql);
+        return result !== undefined;
     }
 
     async update(): Promise<void> {
-        console.log('Updated entity:', this);
-        // Implemente aqui a lógica real de atualizar no banco de dados usando 'this.db'
-        // Exemplo básico de atualização
-        const id = this['id']; // assumindo que 'id' é o campo de identificação único
-        if (!id) {
-            throw new Error('Cannot update entity without id.');
-        }
-        const updates = Object.entries(this).filter(([key, value]) => key !== 'id').map(([key, value]) => `${key} = '${value}'`).join(', ');
-        const sql = `UPDATE ${this.constructor.name} SET ${updates} WHERE id = ${id}`;
+        const { db, ...entityData } = this;
+        const columns = Object.keys(entityData).join(', ');
+        const values = Object.values(entityData).map(value => {
+            if (typeof value === 'string') {
+                return `'${value}'`;
+            } else {
+                return value === null || value === undefined || value === '' ? 'NULL' : value;
+            }
+        }).join(', ');
+        
+        const sql = `UPDATE ${this.tableName} SET (${columns}) = (${values}) WHERE id = ${this['id']}`;
+        console.log(sql);
         await this.run(sql);
     }
-
+    
     async delete(): Promise<void> {
         console.log('Deleted entity:', this);
-        // Implemente aqui a lógica real de deletar no banco de dados usando 'this.db'
-        // Exemplo básico de exclusão
-        const id = this['id']; // assumindo que 'id' é o campo de identificação único
+        const id = this['id'];
         if (!id) {
             throw new Error('Cannot delete entity without id.');
         }
-        const sql = `DELETE FROM ${this.constructor.name} WHERE id = ${id}`;
+        const sql = `DELETE FROM ${this.tableName} WHERE id = ${id}`;
+        await this.run(sql);
+    }
+    
+    async deleteById(id: number): Promise<void> {
+        const sql = `DELETE FROM ${this.tableName} WHERE id = ${id}`;
         await this.run(sql);
     }
 
-    async findById(id: number): Promise<BaseEntity | undefined> {
-        const sql = `SELECT * FROM ${this.constructor.name} WHERE id = ${id}`;
+    static async findById(db: sqlite3.Database, tableName: string, id: number): Promise<BaseEntity | undefined> {
+        const sql = `SELECT * FROM ${tableName} WHERE id = ${id}`;
         return await this.get(sql);
     }
 
-    async findBy(filters: [string, string, string][]): Promise<BaseEntity[]> {
+    // Função estática para encontrar por filtros em uma tabela específica
+    static async findBy(db: sqlite3.Database, tableName: string, filters: [string, string, string][]): Promise<any[]> {
         let whereClause = '';
         filters.forEach((filter, index) => {
             const [column, operator, value] = filter;
@@ -55,20 +82,30 @@ export abstract class BaseEntity {
             whereClause += `${column} ${operator} '${value}'`;
         });
 
-        const sql = `SELECT * FROM ${this.constructor.name} WHERE ${whereClause}`;
-        return await this.all(sql);
+        const sql = `SELECT * FROM ${tableName} WHERE ${whereClause}`;
+        return await this.all(db, sql);
     }
 
-
-    async findAll(): Promise<BaseEntity[]> {
-        const sql = `SELECT * FROM ${this.constructor.name}`;
-        return await this.all(sql);
+    // Função estática para encontrar todos os registros em uma tabela específica
+    static async findAll(db: sqlite3.Database, tableName: string): Promise<BaseEntity[]> {
+        const sql = `SELECT * FROM ${tableName}`;
+        return await this.all(db, sql);
     }
 
-    async deleteById(id: number): Promise<void> {
-        const sql = `DELETE FROM ${this.constructor.name} WHERE id = ${id}`;
-        await this.run(sql);
+    // Função privada para executar consulta SQL e obter resultados
+    private static all(db: sqlite3.Database, sql: string): Promise<any[]> {
+        return new Promise<any[]>((resolve, reject) => {
+            db.all(sql, (err, rows) => {
+                if (err) {
+                    console.error('Error fetching entities:', sql, err);
+                    reject(err);
+                } else {
+                    resolve(rows);
+                }
+            });
+        });
     }
+
 
     private run(sql: string): Promise<void> {
         return new Promise<void>((resolve, reject) => {
@@ -85,7 +122,7 @@ export abstract class BaseEntity {
 
     private get(sql: string): Promise<BaseEntity | undefined> {
         return new Promise<BaseEntity | undefined>((resolve, reject) => {
-            this.db.get(sql, function (err, row:any) {
+            this.db.get(sql, function (err, row: any) {
                 if (err) {
                     console.error('Error fetching entity:', sql, err);
                     reject(err);
@@ -95,20 +132,6 @@ export abstract class BaseEntity {
                     } else {
                         resolve(undefined);
                     }
-                }
-            });
-        });
-    }
-
-    private all(sql: string): Promise<BaseEntity[]> {
-        return new Promise<BaseEntity[]>((resolve, reject) => {
-            this.db.all(sql, function (err, rows) {
-                if (err) {
-                    console.error('Error fetching entities:', sql, err);
-                    reject(err);
-                } else {
-                    const entities: BaseEntity[] = rows.map(row => new (this.constructor as any)(row));
-                    resolve(entities);
                 }
             });
         });

@@ -9,7 +9,7 @@ export class Store extends BaseEntity {
     groupId: number;
     groupName: string;
 
-    static readonly tableName = this.name;
+    static readonly tableName: string = 'stores';
     static readonly fields = [
         { name: 'name', type: 'TEXT NOT NULL' },
         { name: 'type', type: 'TEXT' },
@@ -18,7 +18,7 @@ export class Store extends BaseEntity {
         { name: 'groupName', type: 'TEXT' }
     ];
 
-    constructor(db: sqlite3.Database, storeData: {
+    constructor(db: sqlite3.Database, entityData: {
         id: number,
         name: string,
         type: string,
@@ -27,11 +27,11 @@ export class Store extends BaseEntity {
         groupName: string
     }) {
         super(db);
-        this.id = storeData.id;
-        this.name = storeData.name;
-        this.type = storeData.type;
-        this.abbreviation = storeData.abbreviation;
-        this.groupId = storeData.groupId;
-        this.groupName = storeData.groupName;
+        Object.assign(this, entityData);
     }
+
+    get tableName(): string {
+        return Store.tableName;
+    }
+
 }

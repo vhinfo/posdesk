@@ -5,17 +5,21 @@ export class Category extends BaseEntity {
     id: number;
     name: string;
 
-    static readonly tableName = this.name;
+    static readonly tableName: string = 'categorys';
     static readonly fields = [
         { name: 'name', type: 'TEXT NOT NULL' }
     ];
 
-    constructor(db: sqlite3.Database, categoryData: {
+    constructor(db: sqlite3.Database, entityData: {
         id: number,
         name: string
     }) {
         super(db);
-        this.id = categoryData.id;
-        this.name = categoryData.name;
+        Object.assign(this, entityData);
     }
+
+    get tableName(): string {
+        return Category.tableName;
+    }
+
 }

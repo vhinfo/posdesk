@@ -45,8 +45,7 @@ export default defineComponent({
   methods: {
     async login() {
       try {
-        const user = await login(this.userTemp.user, this.userTemp.password);
-        console.log(user);
+        let user = await login(this.userTemp.user, this.userTemp.password);
         if (user) {
           router.push('/');
         } else {
