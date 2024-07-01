@@ -8,7 +8,7 @@
 </template>
 
 <script lang="ts">
-import { defineComponent, computed, onMounted } from 'vue';
+import { defineComponent, computed, onMounted, watch } from 'vue';
 import { useRoute, useRouter } from 'vue-router';
 import SideMenuBar from './views/components/sysComponents/SideMenuBar.vue';
 import { validateAuth } from './controllers/authController'; // Importe sua função de validação de autenticação aqui
@@ -25,16 +25,23 @@ export default defineComponent({
 
     // Função para verificar o status de autenticação
     const checkLogin = async () => {
-      const isAuthenticated = await validateAuth(); // Chama a função de validação de autenticação
-      if (isAuthenticated) {
-        router.replace('/'); // Redireciona para a rota principal se autenticado
-      } else {
-        router.replace('/login'); // Redireciona para a página de login se não autenticado
+      try{
+        const isAuthenticated = await validateAuth();
+        if (!isAuthenticated && route.path !== '/login' && route.path !== '/store-selection') {
+          router.replace('/login');
+        }
+      }catch (error) {
+        console.error('Erro ao validar o token:', error);
+        router.replace('/login')
       }
     };
 
-    // Executa a verificação ao montar o componente
+    // Executa a verificação ao montar o componente e ao alterar de rota
     onMounted(() => {
+      checkLogin();
+    });
+
+    watch(() => route.path, () => {
       checkLogin();
     });
 

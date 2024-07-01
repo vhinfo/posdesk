@@ -71,7 +71,6 @@ export abstract class BaseEntity {
         return await this.get(sql);
     }
 
-    // Função estática para encontrar por filtros em uma tabela específica
     static async findBy(db: sqlite3.Database, tableName: string, filters: [string, string, string][]): Promise<any[]> {
         let whereClause = '';
         filters.forEach((filter, index) => {
@@ -91,6 +90,14 @@ export abstract class BaseEntity {
         const sql = `SELECT * FROM ${tableName}`;
         return await this.all(db, sql);
     }
+
+    // Função estática para encontrar todos os registros em uma tabela específica
+    static async findFirst(db: sqlite3.Database, tableName: string): Promise<any> {
+        const sql = `SELECT * FROM ${tableName}`;
+        let result = await this.all(db, sql);
+        return result[0];
+    }
+
 
     // Função privada para executar consulta SQL e obter resultados
     private static all(db: sqlite3.Database, sql: string): Promise<any[]> {
@@ -115,6 +122,19 @@ export abstract class BaseEntity {
                     reject(err);
                 } else {
                     resolve();
+                }
+            });
+        });
+    }
+
+    private static async executeQuery(db: sqlite3.Database, sql: string): Promise<any[]> {
+        return new Promise<any[]>((resolve, reject) => {
+            db.all(sql, (err, rows) => {
+                if (err) {
+                    console.error('Error fetching entities:', sql, err);
+                    reject(err);
+                } else {
+                    resolve(rows);
                 }
             });
         });

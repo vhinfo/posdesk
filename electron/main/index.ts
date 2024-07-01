@@ -160,8 +160,13 @@ function checkForUpdates() {
 ipcMain.handle('auth-validate', async (event, args) => {
   return await authService.validateAuthentication(args);
 });
+
 ipcMain.handle('auth-login', async (event, user, password) => {
   return await authService.authenticate(user, password);
+});
+
+ipcMain.handle('get-store-cashiers', async (event, ) => {
+  return await authService.getStoreCashiers();
 });
 
 

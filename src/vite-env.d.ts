@@ -12,5 +12,6 @@ interface Window {
   authService: {
     validateAuthentication: () => Promise<boolean>,
     authenticate: (user: string, password: string) => Promise<boolean>
+    getStoreCashiers: () => Promise<any>
   }
 }

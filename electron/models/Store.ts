@@ -34,4 +34,18 @@ export class Store extends BaseEntity {
         return Store.tableName;
     }
 
+    static async clear(db: sqlite3.Database): Promise<void> {
+        return new Promise<void>((resolve, reject) => {
+            const query = `DELETE FROM ${Store.tableName}`;
+            db.run(query, (err) => {
+                if (err) {
+                    console.error(`Error clearing ${Store.tableName} table:`, err);
+                    reject(err);
+                } else {
+                    console.log(`Cleared ${Store.tableName} table.`);
+                    resolve();
+                }
+            });
+        });
+    }
 }

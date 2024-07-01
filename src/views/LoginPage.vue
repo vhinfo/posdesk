@@ -28,7 +28,7 @@
 
 <script lang="ts">
 import { defineComponent } from 'vue';
-import { login } from '../controllers/authController';
+import { login,getStoreCashiers } from '../controllers/authController';
 import router from '../router';
 
 export default defineComponent({
@@ -47,7 +47,9 @@ export default defineComponent({
       try {
         let user = await login(this.userTemp.user, this.userTemp.password);
         if (user) {
-          router.push('/');
+          let storeCashier = await getStoreCashiers();
+          console.log('STTORE CASHIERS',storeCashier);
+          router.push('/store-selection');
         } else {
           console.error('Erro durante a autenticação: Usuário ou senha inválidos');
         }

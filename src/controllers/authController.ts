@@ -7,3 +7,7 @@ export async function validateAuth(): Promise<boolean> {
 export async function login(user:string, password:string): Promise<boolean> {
   return window.authService.authenticate(user, password);
 }
+
+export async function getStoreCashiers(): Promise<any> {
+  return window.authService.getStoreCashiers();
+}

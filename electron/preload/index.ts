@@ -118,6 +118,10 @@ contextBridge.exposeInMainWorld('authService', {
   },
   authenticate: (user: string, password: string) => {
     return ipcRenderer.invoke('auth-login', user, password);
+  },
+
+  getStoreCashiers: () => {
+    return ipcRenderer.invoke('get-store-cashiers');
   }
 });
 

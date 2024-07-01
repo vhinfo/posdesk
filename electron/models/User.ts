@@ -69,5 +69,20 @@ export class User extends BaseEntity {
         });
     }
 
+    static async clear(db: sqlite3.Database): Promise<void> {
+        return new Promise<void>((resolve, reject) => {
+            const query = `DELETE FROM ${User.tableName}`;
+            db.run(query, (err) => {
+                if (err) {
+                    console.error(`Error clearing ${User.tableName} table:`, err);
+                    reject(err);
+                } else {
+                    console.log(`Cleared ${User.tableName} table.`);
+                    resolve();
+                }
+            });
+        });
+    }
+
     
 }

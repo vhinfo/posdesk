@@ -1,3 +1,5 @@
+import jwt from 'jsonwebtoken';
+
 import { getFirstConfigs, login } from './api/authApi.js';
 import { User } from '../models/User.js';
 import { DatabaseService } from '../services/databaseService.js';
@@ -8,16 +10,20 @@ import { Cupom } from '../models/Cupom.js';
 import { BaseEntity } from '../models/BaseEntity.js';
 
 export const authService = {
-  async validateAuthentication(args: any): Promise<boolean> {
+  async validateAuthentication(args: any): Promise<boolean> 
+  {
     const user = await User.getFirstUser(DatabaseService.getDBInstance());
-    if (!user) {
-      return false;
+    if(!user) {
+      throw Error('sem usuário salvo em cache')
     }
-
+    if(!this.isTokenExpired(user.accessToken)){
+      throw Error(' conexão expirada, connecte-se novamente ')
+    }
     return true;
   },
 
-  async authenticate(user: string, password: string): Promise<boolean> {
+  async authenticate(user: string, password: string): Promise<boolean> 
+  {
     const token = await login(user, password);
     const firstconfigs = await getFirstConfigs(token);
     let savedUser = await this.createUser(firstconfigs, token);
@@ -28,7 +34,28 @@ export const authService = {
     return true;
   },
 
-  async createUser(response: any, accessToken: string): Promise<User> {
+  async getStoreCashiers(): Promise<{ store: Store, cashiers: Cashier[] }> {
+    try {
+      const user = await User.getFirstUser(DatabaseService.getDBInstance());
+      if (!user) {
+        throw new Error('Nenhum usuário encontrado');
+      }
+      const store = await BaseEntity.findFirst(DatabaseService.getDBInstance(),Store.tableName);
+      const cashiers = await BaseEntity.findBy(DatabaseService.getDBInstance(),Cashier.tableName,[['storeId','=',store.id]]);
+      if(cashiers.length === 0 ){
+        throw Error('sem caixa')
+      }
+      return { store, cashiers };
+    } catch (error) {
+      console.error('Erro ao obter dados da loja e caixas:', error);
+      throw error;
+    }
+  },
+
+  
+
+  async createUser(response: any, accessToken: string): Promise<User> 
+  {
     const user = new User(DatabaseService.getDBInstance(), {
       id: response.user_id,
       name: response.user_name,
@@ -40,12 +67,17 @@ export const authService = {
       cashierName: response.cashier_name
     });
 
+    // clear all users
+    User.clear(DatabaseService.getDBInstance());
+    Store.clear(DatabaseService.getDBInstance());
+
     await user.save();
 
     return user;
   },
 
-  async createStore(response: any): Promise<Store> {
+  async createStore(response: any): Promise<Store> 
+  {
     response = response.store;
     const store = new Store(DatabaseService.getDBInstance(), {
       id: response.store_id,
@@ -63,7 +95,8 @@ export const authService = {
     return store;
   },
 
-  async createCashier(cashierResponse: any): Promise<Cashier> {
+  async createCashier(cashierResponse: any): Promise<Cashier> 
+  {
     const cashier = new Cashier(DatabaseService.getDBInstance(), {
       id: cashierResponse.cashier_id,
       name: cashierResponse.cashier_name,
@@ -77,7 +110,8 @@ export const authService = {
     return cashier;
   },
 
-  async createPaymentMethod(response: any): Promise<PaymentMethod[]> {
+  async createPaymentMethod(response: any): Promise<PaymentMethod[]> 
+  {
     const paymentMethods: PaymentMethod[] = [];
 
     for (const payment of response.payment_methods) {
@@ -96,7 +130,8 @@ export const authService = {
     return paymentMethods;
   },
 
-  async createCupom(response: any): Promise<Cupom[]> {
+  async createCupom(response: any): Promise<Cupom[]> 
+  {
     const copons: Cupom[] = [];
 
     for (const cupon of response.cupoms) {
@@ -129,6 +164,14 @@ export const authService = {
     }
 
     return copons;
-  }
+  },
 
+  isTokenExpired(token: string): boolean {
+    const decodedToken: any = jwt.decode(token);
+    if (!decodedToken || !decodedToken.expires) {
+      return false;
+    }
+    const currentTimestampInSeconds = Math.floor(Date.now() / 1000);
+    return decodedToken.expires > currentTimestampInSeconds;
+  }
 };
