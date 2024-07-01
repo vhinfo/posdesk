@@ -7,6 +7,7 @@ import { Salesman } from './Salesman';
 import { Payment } from './Payment';
 import { Product } from './Product';
 import { Discount } from './Discount';
+import sqlite3 from 'sqlite3';
 
 export class Sale extends BaseEntity {
     id: number;
@@ -43,7 +44,7 @@ export class Sale extends BaseEntity {
     nfceCoupon: string;
     status: string;
 
-    static readonly tableName = 'sales';
+    static readonly tableName = this.name;
     static readonly fields = [
         { name: 'changeValue', type: 'REAL' },
         { name: 'reProcess', type: 'INTEGER' },
@@ -70,7 +71,7 @@ export class Sale extends BaseEntity {
         { name: 'status', type: 'TEXT' }
     ];
 
-    constructor(saleData: {
+    constructor(db: sqlite3.Database, saleData: {
         id: number;
         change_value: number;
         re_process: boolean;
@@ -113,7 +114,7 @@ export class Sale extends BaseEntity {
             description: string;
         };
     }) {
-        super();
+        super(db);
         this.id = saleData.id;
         this.changeValue = saleData.change_value;
         this.reProcess = saleData.re_process;

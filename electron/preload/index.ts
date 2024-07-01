@@ -114,6 +114,8 @@ setTimeout(removeLoading, 4999);
 // AUTH
 contextBridge.exposeInMainWorld('authService', {
   validateAuthentication: () => ipcRenderer.invoke('auth-validate'),
-  authenticate:  () => ipcRenderer.invoke('auth-login')
+  authenticate: (user:string, password:string) => {
+    ipcRenderer.invoke('auth-login', user, password);
+  }
 });
 

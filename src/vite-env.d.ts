@@ -11,6 +11,6 @@ interface Window {
   ipcRenderer: import('electron').IpcRenderer,
   authService: {
     validateAuthentication: () => Promise<boolean>,
-    authenticate: (username: string, password: string) => Promise<any>
+    authenticate: (user: string, password: string) => Promise<any>
   }
 }

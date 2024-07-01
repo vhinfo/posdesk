@@ -1,4 +1,5 @@
 import { BaseEntity } from './BaseEntity';
+import sqlite3 from 'sqlite3';
 
 export class PaymentMethod extends BaseEntity {
     id: number;
@@ -7,7 +8,7 @@ export class PaymentMethod extends BaseEntity {
     issue: boolean;
     icon: string;
 
-    static readonly tableName = 'payments';
+    static readonly tableName = this.name;
     static readonly fields = [
         { name: 'description', type: 'TEXT NOT NULL' },
         { name: 'alias', type: 'TEXT NOT NULL UNIQUE' },
@@ -15,14 +16,14 @@ export class PaymentMethod extends BaseEntity {
         { name: 'icon', type: 'TEXT' }
     ];
 
-    constructor(paymentData: {
+    constructor(db: sqlite3.Database,paymentData: {
         id: number,
         description: string,
         alias: string,
         issue: boolean,
         icon: string
     }) {
-        super();
+        super(db);
         this.id = paymentData.id;
         this.description = paymentData.description;
         this.alias = paymentData.alias;

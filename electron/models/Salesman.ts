@@ -1,4 +1,5 @@
 import { BaseEntity } from './BaseEntity';
+import sqlite3 from 'sqlite3';
 
 export class Salesman extends BaseEntity {
     id: number;
@@ -7,7 +8,7 @@ export class Salesman extends BaseEntity {
     phone: string;
     type: string;
 
-    static readonly tableName = 'salesmans';
+    static readonly tableName = this.name;
     static readonly fields = [
         { name: 'name', type: 'TEXT NOT NULL' },
         { name: 'email', type: 'TEXT' },
@@ -15,14 +16,14 @@ export class Salesman extends BaseEntity {
         { name: 'type', type: 'TEXT' }
     ];
 
-    constructor(customerData: {
+    constructor(db: sqlite3.Database, customerData: {
         id: number,
         name: string,
         email: string,
         phone: string,
         type: string
     }) {
-        super();
+        super(db);
         this.id = customerData.id;
         this.name = customerData.name;
         this.email = customerData.email;

@@ -158,12 +158,10 @@ function checkForUpdates() {
 
 // AUTH
 ipcMain.handle('auth-validate', async (event, args) => {
-  const isAuthenticated = await authService.validateAuthentication(args);
-  return isAuthenticated;
+  return await authService.validateAuthentication(args);
 });
 ipcMain.handle('auth-login', async (event, user, password) => {
-  const isAuthenticated = await authService.authenticate(user, password);
-  return isAuthenticated;
+  return await authService.authenticate(user, password);
 });
 
 

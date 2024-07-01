@@ -4,7 +4,6 @@ import sqlite3 from 'sqlite3';
 export class User extends BaseEntity {
     id: number;
     name: string;
-    login: string;
     accessToken: string;
     profession: string;
     isManager: boolean;
@@ -12,10 +11,9 @@ export class User extends BaseEntity {
     cashierId: number;
     cashierName: string;
 
-    static readonly tableName = 'users';
+    static readonly tableName = this.name;
     static readonly fields = [
         { name: 'name', type: 'TEXT NOT NULL' },
-        { name: 'login', type: 'TEXT NOT NULL UNIQUE' },
         { name: 'accessToken', type: 'TEXT NOT NULL' },
         { name: 'profession', type: 'TEXT' },
         { name: 'isManager', type: 'INTEGER' },
@@ -27,7 +25,6 @@ export class User extends BaseEntity {
     constructor(db: sqlite3.Database, userData: {
         id: number,
         name: string,
-        login: string,
         accessToken: string,
         profession: string,
         isManager: boolean,
@@ -38,7 +35,6 @@ export class User extends BaseEntity {
         super(db);
         this.id = userData.id;
         this.name = userData.name;
-        this.login = userData.login;
         this.accessToken = userData.accessToken;
         this.profession = userData.profession;
         this.isManager = userData.isManager;
@@ -59,7 +55,6 @@ export class User extends BaseEntity {
                         const user = new User(db, {
                             id: row.id,
                             name: row.name,
-                            login: row.login,
                             accessToken: row.accessToken,
                             profession: row.profession,
                             isManager: row.isManager === 1,

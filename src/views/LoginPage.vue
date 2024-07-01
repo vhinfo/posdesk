@@ -1,5 +1,4 @@
 <template>
-  TESTE LOGIN PAGE
   <div class="login-page">
     <div class="card">
       <div class="avatar">
@@ -47,8 +46,9 @@ export default defineComponent({
     async login() {
       try {
         const user = await login(this.userTemp.user, this.userTemp.password);
+        console.log(user);
         if (user) {
-          router.push('/about');
+          router.push('/');
         } else {
           console.error('Erro durante a autenticação: Usuário ou senha inválidos');
         }
