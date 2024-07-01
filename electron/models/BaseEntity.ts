@@ -93,7 +93,7 @@ export abstract class BaseEntity {
 
     // Função estática para encontrar todos os registros em uma tabela específica
     static async findFirst(db: sqlite3.Database, tableName: string): Promise<any> {
-        const sql = `SELECT * FROM ${tableName}`;
+        const sql = `SELECT * FROM ${tableName} limit 1`;
         let result = await this.all(db, sql);
         return result[0];
     }
