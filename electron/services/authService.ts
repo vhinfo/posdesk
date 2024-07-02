@@ -1,6 +1,6 @@
 import jwt from 'jsonwebtoken';
 
-import { getFirstConfigs, login } from './api/authApi.js';
+import { getFirstConfigs, login, setCashier } from './api/authApi.js';
 import { User } from '../models/User.js';
 import { DatabaseService } from '../services/databaseService.js';
 import { Store } from '../models/Store.js';
@@ -8,6 +8,7 @@ import { Cashier } from '../models/Cashier.js';
 import { PaymentMethod } from '../models/PaymentMethod.js';
 import { Cupom } from '../models/Cupom.js';
 import { BaseEntity } from '../models/BaseEntity.js';
+import { Database } from 'sqlite3';
 
 export const authService = {
   async validateAuthentication(args: any): Promise<boolean> 
@@ -18,6 +19,9 @@ export const authService = {
     }
     if(!this.isTokenExpired(user.accessToken)){
       throw Error(' conexão expirada, connecte-se novamente ')
+    }
+    if(user.cashierId === null || user.cashierName === null){
+      throw Error(' usuario sem caixa definido ')
     }
     return true;
   },
@@ -34,24 +38,31 @@ export const authService = {
     return true;
   },
 
-  async getStoreCashiers(): Promise<{ store: Store, cashiers: Cashier[] }> {
-    try {
+  async getStoreCashiers(): Promise<{ store: Store, cashiers: Cashier[] }> 
+  {
       const user = await User.getFirstUser(DatabaseService.getDBInstance());
       if (!user) {
         throw new Error('Nenhum usuário encontrado');
       }
-      const store = await BaseEntity.findFirst(DatabaseService.getDBInstance(),Store.tableName);
-      const cashiers = await BaseEntity.findBy(DatabaseService.getDBInstance(),Cashier.tableName,[['storeId','=',store.id]]);
+      const store = await Store.findFirst(DatabaseService.getDBInstance());
+      const cashiers = await Cashier.findBy(DatabaseService.getDBInstance(),[['storeId','=',store.id]]);
       if(cashiers.length === 0 ){
         throw Error('sem caixa')
       }
       return { store, cashiers };
-    } catch (error) {
-      console.error('Erro ao obter dados da loja e caixas:', error);
-      throw error;
-    }
   },
 
+  async setCashier(cashierId:number):Promise<boolean>
+  {
+    let user = await User.getFirstUser(DatabaseService.getDBInstance());
+    let cashier = await Cashier.findById(DatabaseService.getDBInstance(), cashierId)
+    let newToken = await setCashier(cashierId,user.accessToken);
+    user.accessToken = newToken;
+    user.cashierId = cashier.id;
+    user.cashierName = cashier.name;
+    user.save();
+    return false;
+  },
   
 
   async createUser(response: any, accessToken: string): Promise<User> 
@@ -70,6 +81,7 @@ export const authService = {
     // clear all users
     User.clear(DatabaseService.getDBInstance());
     Store.clear(DatabaseService.getDBInstance());
+    Cupom.clear(DatabaseService.getDBInstance());
 
     await user.save();
 
@@ -153,7 +165,7 @@ export const authService = {
         customerId: cupon.customer_id
       });
 
-      const baseCupom = await BaseEntity.findBy(DatabaseService.getDBInstance(), Cupom.tableName, [['code', '=', cupom.code]]);
+      const baseCupom = await Cupom.findBy(DatabaseService.getDBInstance(), [['code', '=', cupom.code]]);
       if (baseCupom.length === 0) {
         await cupom.save();
         copons.push(cupom);
@@ -166,12 +178,14 @@ export const authService = {
     return copons;
   },
 
-  isTokenExpired(token: string): boolean {
+  isTokenExpired(token: string): boolean 
+  {
     const decodedToken: any = jwt.decode(token);
     if (!decodedToken || !decodedToken.expires) {
       return false;
     }
     const currentTimestampInSeconds = Math.floor(Date.now() / 1000);
+    console.log("token expire in: ",decodedToken.expires, "current: ",currentTimestampInSeconds);
     return decodedToken.expires > currentTimestampInSeconds;
   }
 };

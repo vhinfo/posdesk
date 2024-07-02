@@ -25,16 +25,22 @@ export default defineComponent({
 
     // Função para verificar o status de autenticação
     const checkLogin = async () => {
-      try{
+      try {
         const isAuthenticated = await validateAuth();
         if (!isAuthenticated && route.path !== '/login' && route.path !== '/store-selection') {
           router.replace('/login');
         }
-      }catch (error) {
+      } catch (error) {
         console.error('Erro ao validar o token:', error);
-        router.replace('/login')
+        // Verificar se a mensagem de erro contém "usuario sem caixa definido"
+        if (error.message && error.message.includes("usuario sem caixa definido")) {
+          router.push('/store-selection');
+        } else {
+          router.replace('/login');
+        }
       }
     };
+
 
     // Executa a verificação ao montar o componente e ao alterar de rota
     onMounted(() => {

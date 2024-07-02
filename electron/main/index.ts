@@ -14,8 +14,6 @@ log.transports.file.resolvePathFn = () => path.join(appDirectory, 'logs/main.log
 log.info('Log from the main process');
 log.catchErrors();
 
-log.info('ERP TOKEN:', process.env.ERP_TOKEN);
-
 const require = createRequire(import.meta.url)
 const __dirname = path.dirname(fileURLToPath(import.meta.url))
 
@@ -148,10 +146,8 @@ ipcMain.handle('open-win', (_, arg) => {
 
 function checkForUpdates() {
   try {
-    log.info('tentando atualizar');
     autoUpdater.checkForUpdates();
   } catch (e) {
-
     log.info('Falha ao recuperar atualizações', e);
   }
 }
@@ -167,6 +163,10 @@ ipcMain.handle('auth-login', async (event, user, password) => {
 
 ipcMain.handle('get-store-cashiers', async (event, ) => {
   return await authService.getStoreCashiers();
+});
+
+ipcMain.handle('set-cashier', async (event, cashierId: number ) => {
+  return await authService.setCashier(cashierId);
 });
 
 
