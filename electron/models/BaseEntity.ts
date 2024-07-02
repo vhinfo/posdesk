@@ -40,7 +40,7 @@ export abstract class BaseEntity {
         const columns = Object.keys(entityData).map(key => `${key} = ?`).join(', ');
         const values = Object.values(entityData).map(value => {
             if (typeof value === 'string') {
-                return `'${value}'`;
+                return `${value}`;
             } else {
                 return value === null || value === undefined || value === '' ? 'NULL' : value;
             }
@@ -131,7 +131,7 @@ export abstract class BaseEntity {
                     console.error('Error fetching entity:', sql, err);
                     reject(err);
                 } else {
-                    resolve(row);
+                    resolve(BaseEntity.removeQuotes(row));
                 }
             });
         });
@@ -157,11 +157,28 @@ export abstract class BaseEntity {
                     console.error('Error fetching entities:', sql, err);
                     reject(err);
                 } else {
-                    resolve(rows);
+                    resolve(rows.map(row => BaseEntity.removeQuotes(row)));
                 }
             });
         });
     }
+    
+    private static removeQuotes(row: any): any {
+        if (!row) {
+            return row;
+        }
+    
+        const result: any = {};
+        for (const key in row) {
+            if (typeof row[key] === 'string' && row[key].startsWith("'") && row[key].endsWith("'")) {
+                result[key] = row[key].slice(1, -1);
+            } else {
+                result[key] = row[key];
+            }
+        }
+        return result;
+    }
+    
 
     public static createSQLCreateTable(tableName: string, fields: { name: string, type: string }[]): string {
         const createTableSQL = `
@@ -172,6 +189,4 @@ export abstract class BaseEntity {
         `;
         return createTableSQL;
     }
-
-
 }
