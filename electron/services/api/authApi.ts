@@ -56,5 +56,5 @@ export async function setCashier(cashierId: number, token: string){
     throw new Error(`${response.status} - ${response.statusText}`);
   }
   const result = await response.json();
-  return result.data;
+  return result.data.access;
 }

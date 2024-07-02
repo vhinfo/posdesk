@@ -43,7 +43,7 @@ export class User extends BaseEntity {
 
     public static async getFirstUser(db: sqlite3.Database): Promise<User | null> {
         return new Promise((resolve, reject) => {
-            const query = `SELECT * FROM ${User.tableName} LIMIT 1`; // Acessando tableName através de User.tableName
+            const query = `SELECT * FROM ${User.tableName} LIMIT 1`;
             db.get(query, (err, row:any) => {
                 if (err) {
                     console.error(`Error fetching first ${User.tableName}:`, err);
@@ -67,22 +67,5 @@ export class User extends BaseEntity {
                 }
             });
         });
-    }
-
-    static async clear(db: sqlite3.Database): Promise<void> {
-        return new Promise<void>((resolve, reject) => {
-            const query = `DELETE FROM ${User.tableName}`;
-            db.run(query, (err) => {
-                if (err) {
-                    console.error(`Error clearing ${User.tableName} table:`, err);
-                    reject(err);
-                } else {
-                    console.log(`Cleared ${User.tableName} table.`);
-                    resolve();
-                }
-            });
-        });
-    }
-
-    
+    }    
 }

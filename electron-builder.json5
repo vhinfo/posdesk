@@ -7,7 +7,7 @@
   "publish": [
     {
       "provider": "github",
-      "owner": "pedrogomes30",
+      "owner": "vhinfo",
       "repo": "posdesk",
       "releaseType": "release"
     }

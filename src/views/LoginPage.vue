@@ -28,7 +28,7 @@
 
 <script lang="ts">
 import { defineComponent } from 'vue';
-import { login,getStoreCashiers } from '../controllers/authController';
+import { login } from '../controllers/authController';
 import router from '../router';
 
 export default defineComponent({
@@ -47,11 +47,9 @@ export default defineComponent({
       try {
         let user = await login(this.userTemp.user, this.userTemp.password);
         if (user) {
-          let storeCashier = await getStoreCashiers();
-          console.log('STTORE CASHIERS',storeCashier);
           router.push('/store-selection');
         } else {
-          console.error('Erro durante a autenticação: Usuário ou senha inválidos');
+          console.error('Usuário ou senha inválidos');
         }
       } catch (error) {
         console.error('Erro durante a autenticação:', error);
@@ -78,17 +76,32 @@ export default defineComponent({
   width: 80%;
   max-width: 400px;
   text-align: center;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
 }
 
 .avatar {
   margin-bottom: 20px;
 }
 
+.avatar img {
+  max-width: 100px; /* Ajusta a largura máxima da imagem */
+  height: auto; /* Mantém a proporção da imagem */
+}
+
+h2 {
+  margin-bottom: 20px;
+}
+
+form {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
 input {
-  width: 100%;
+  width: 90%; /* Ajusta a largura dos inputs */
   padding: 10px;
   margin-bottom: 10px;
-  margin-right: 10px;
   border: none;
   border-radius: 4px;
   background-color: #555;
@@ -96,16 +109,17 @@ input {
 }
 
 button {
-  width: 100%;
+  width: 90%; /* Ajusta a largura do botão */
   padding: 10px;
   border: none;
   border-radius: 4px;
-  background-color: #007bff;
+  background-color: #a80092;
   color: #ffffff;
   cursor: pointer;
+  margin-top: 10px; /* Adiciona margem acima do botão */
 }
 
 button:hover {
-  background-color: blueviolet;
+  background-color: rgb(248, 18, 210);
 }
 </style>
