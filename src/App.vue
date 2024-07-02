@@ -30,7 +30,7 @@ export default defineComponent({
         if (!isAuthenticated && route.path !== '/login' && route.path !== '/store-selection') {
           router.replace('/login');
         }
-      } catch (error) {
+      } catch (error:any) {
         console.error('Erro ao validar o token:', error);
         // Verificar se a mensagem de erro contém "usuario sem caixa definido"
         if (error.message && error.message.includes("usuario sem caixa definido")) {

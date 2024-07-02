@@ -7,7 +7,7 @@ import './controllers/demos/ipc';
 
 const app = createApp(App);
 
-app.use(router); // Use o router na sua aplicação
+app.use(router);
 
 app.mount('#app').$nextTick(() => {
   postMessage({ payload: 'removeLoading' }, '*');

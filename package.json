@@ -12,6 +12,8 @@
   },
   "main": "dist-electron/main/index.js",
   "dependencies": {
+    "@jamescoyle/vue-icon": "^0.1.2",
+    "@mdi/js": "^7.4.47",
     "electron-log": "^5.1.5",
     "electron-updater": "^6.2.1",
     "jsonwebtoken": "^9.0.2",

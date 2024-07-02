@@ -7,8 +7,6 @@ import { Store } from '../models/Store.js';
 import { Cashier } from '../models/Cashier.js';
 import { PaymentMethod } from '../models/PaymentMethod.js';
 import { Cupom } from '../models/Cupom.js';
-import { BaseEntity } from '../models/BaseEntity.js';
-import { Database } from 'sqlite3';
 
 export const authService = {
   async validateAuthentication(args: any): Promise<boolean> 
@@ -64,7 +62,6 @@ export const authService = {
     return false;
   },
   
-
   async createUser(response: any, accessToken: string): Promise<User> 
   {
     const user = new User(DatabaseService.getDBInstance(), {
@@ -185,7 +182,6 @@ export const authService = {
       return false;
     }
     const currentTimestampInSeconds = Math.floor(Date.now() / 1000);
-    console.log("token expire in: ",decodedToken.expires, "current: ",currentTimestampInSeconds);
     return decodedToken.expires > currentTimestampInSeconds;
   }
 };
