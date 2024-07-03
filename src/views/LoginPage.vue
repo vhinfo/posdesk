@@ -4,7 +4,6 @@
       <div class="avatar">
         <img src="../assets/builderLogoLogin.png" alt="Logo">
       </div>
-      <h2>Autenticação</h2>
       <form @submit.prevent="login" ref="form">
         <input
           v-model="userTemp.user"
@@ -84,8 +83,8 @@ export default defineComponent({
 }
 
 .avatar img {
-  max-width: 100px; /* Ajusta a largura máxima da imagem */
-  height: auto; /* Mantém a proporção da imagem */
+  max-width: 300px;
+  height: auto;
 }
 
 h2 {
@@ -99,7 +98,7 @@ form {
 }
 
 input {
-  width: 90%; /* Ajusta a largura dos inputs */
+  width: 90%;
   padding: 10px;
   margin-bottom: 10px;
   border: none;
@@ -109,14 +108,14 @@ input {
 }
 
 button {
-  width: 90%; /* Ajusta a largura do botão */
+  width: 90%;
   padding: 10px;
   border: none;
   border-radius: 4px;
   background-color: #a80092;
   color: #ffffff;
   cursor: pointer;
-  margin-top: 10px; /* Adiciona margem acima do botão */
+  margin-top: 10px;
 }
 
 button:hover {

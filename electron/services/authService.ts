@@ -8,10 +8,12 @@ import { Cashier } from '../models/Cashier.js';
 import { PaymentMethod } from '../models/PaymentMethod.js';
 import { Cupom } from '../models/Cupom.js';
 
+const db = DatabaseService.getDBInstance();
+
 export const authService = {
-  async validateAuthentication(args: any): Promise<boolean> 
+  async validateAuthentication(args: any): Promise<{ name:string, storeName:string, cashierName: string, isManager:boolean }> 
   {
-    const user = await User.getFirstUser(DatabaseService.getDBInstance());
+    const user = await User.getFirstUser(db);
     if(!user) {
       throw Error('sem usuário salvo em cache')
     }
@@ -21,7 +23,13 @@ export const authService = {
     if(user.cashierId === null || user.cashierName === null){
       throw Error(' usuario sem caixa definido ')
     }
-    return true;
+
+    return { 
+      name:user.name, 
+      storeName:user.storeName, 
+      cashierName: user.cashierName, 
+      isManager:user.isManager 
+    };
   },
 
   async authenticate(user: string, password: string): Promise<boolean> 
@@ -38,12 +46,12 @@ export const authService = {
 
   async getStoreCashiers(): Promise<{ store: Store, cashiers: Cashier[] }> 
   {
-      const user = await User.getFirstUser(DatabaseService.getDBInstance());
+      const user = await User.getFirstUser(db);
       if (!user) {
         throw new Error('Nenhum usuário encontrado');
       }
-      const store = await Store.findFirst(DatabaseService.getDBInstance());
-      const cashiers = await Cashier.findBy(DatabaseService.getDBInstance(),[['storeId','=',store.id]]);
+      const store = await Store.findFirst(db);
+      const cashiers = await Cashier.findBy(db,[['storeId','=',store.id]]);
       if(cashiers.length === 0 ){
         throw Error('sem caixa')
       }
@@ -52,25 +60,27 @@ export const authService = {
 
   async setCashier(cashierId:number):Promise<boolean>
   {
-    let user = await User.getFirstUser(DatabaseService.getDBInstance());
-    let cashier = await Cashier.findById(DatabaseService.getDBInstance(), cashierId)
+    let user = await User.getFirstUser(db);
+    let cashier = await Cashier.findById(db, cashierId);
+    let store = await Store.findById(db,cashier.storeId);
     let newToken = await setCashier(cashierId,user.accessToken);
     user.accessToken = newToken;
     user.cashierId = cashier.id;
     user.cashierName = cashier.name;
+    user.storeName = store.name;
     user.save();
     return false;
   },
 
   async makeLogout():Promise<boolean>
   {
-
+    User.clear(db);
     return true;
   },
   
   async createUser(response: any, accessToken: string): Promise<User> 
   {
-    const user = new User(DatabaseService.getDBInstance(), {
+    const user = new User(db, {
       id: response.user_id,
       name: response.user_name,
       accessToken: accessToken,
@@ -78,13 +88,14 @@ export const authService = {
       isManager: response.is_manager,
       image: response.img,
       cashierId: response.cashier_id,
-      cashierName: response.cashier_name
+      cashierName: response.cashier_name,
+      storeName: null,
     });
 
     // clear all users
-    User.clear(DatabaseService.getDBInstance());
-    Store.clear(DatabaseService.getDBInstance());
-    Cupom.clear(DatabaseService.getDBInstance());
+    User.clear(db);
+    Store.clear(db);
+    Cupom.clear(db);
 
     await user.save();
 
@@ -94,7 +105,7 @@ export const authService = {
   async createStore(response: any): Promise<Store> 
   {
     response = response.store;
-    const store = new Store(DatabaseService.getDBInstance(), {
+    const store = new Store(db, {
       id: response.store_id,
       name: response.store_name,
       type: response.store_type,
@@ -112,7 +123,7 @@ export const authService = {
 
   async createCashier(cashierResponse: any): Promise<Cashier> 
   {
-    const cashier = new Cashier(DatabaseService.getDBInstance(), {
+    const cashier = new Cashier(db, {
       id: cashierResponse.cashier_id,
       name: cashierResponse.cashier_name,
       storeId: cashierResponse.cashier_store,
@@ -130,7 +141,7 @@ export const authService = {
     const paymentMethods: PaymentMethod[] = [];
 
     for (const payment of response.payment_methods) {
-      const paymentMethod = new PaymentMethod(DatabaseService.getDBInstance(), {
+      const paymentMethod = new PaymentMethod(db, {
         id: payment.method_id,
         description: payment.method_description,
         alias: payment.method_alias,
@@ -150,7 +161,7 @@ export const authService = {
     const copons: Cupom[] = [];
 
     for (const cupon of response.cupoms) {
-      const cupom = new Cupom(DatabaseService.getDBInstance(), {
+      const cupom = new Cupom(db, {
         id: null,
         label: cupon.label,
         code: cupon.code,
@@ -168,7 +179,7 @@ export const authService = {
         customerId: cupon.customer_id
       });
 
-      const baseCupom = await Cupom.findBy(DatabaseService.getDBInstance(), [['code', '=', cupom.code]]);
+      const baseCupom = await Cupom.findBy(db, [['code', '=', cupom.code]]);
       if (baseCupom.length === 0) {
         await cupom.save();
         copons.push(cupom);

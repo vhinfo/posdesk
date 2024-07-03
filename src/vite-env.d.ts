@@ -21,7 +21,7 @@ interface Window {
   // Expose in the `electron/preload/index.ts`
   ipcRenderer: import('electron').IpcRenderer,
   authService: {
-    validateAuthentication: () => Promise<boolean>,
+    validateAuthentication: () => Promise<{ name:string, storeName:string, cashierName: string, isManager:boolean }>,
     makeLogout: () => Promise<boolean>,
     getStoreCashiers: () => Promise<any>,
     authenticate: (user: string, password: string) => Promise<boolean>,

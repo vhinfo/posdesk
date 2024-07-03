@@ -4,8 +4,8 @@
     <div class="user-info">
       <img src="../../../assets/favicon.png" alt="Loja Logo" class="store-logo" />
       <div class="store-info">
-        <div class="store-name">Loja Miss Amora</div>
-        <div class="user-info-text">administrador - caixa1</div>
+        <div class="store-name">{{ storeName }}</div>
+        <div class="user-info-text">{{ userInfo }}</div>
       </div>
     </div>
 
@@ -21,7 +21,7 @@
           <SvgIcon type="mdi" :path="mdiHistory" class="menu-icon" />
         </router-link>
       </li>
-      <li class="nav-item" @click="logout" title='Desconectar'>
+      <li class="nav-item" @click="logoutAction" title='Desconectar'>
         <SvgIcon type="mdi" :path="mdiLogout" class="menu-icon" />
       </li>
     </ul>
@@ -29,38 +29,43 @@
 </template>
 
 <script lang="ts">
-import { defineComponent } from 'vue';
+import { defineComponent, computed } from 'vue';
+import { useStore } from 'vuex';
 import SvgIcon from '@jamescoyle/vue-icon';
 import { mdiHome, mdiHistory, mdiLogout } from '@mdi/js';
-import { logout } from '../../controllers/authController';
+import { logout } from '../../../controllers/authController';
+import router from '../../../router';
 
 export default defineComponent({
-  name: 'TopMenuBar',
+  name: 'MenuBar',
   components: {
     SvgIcon,
   },
-  data() {
-    return {
-      userName: 'Nome do Usuário',
-      storeName: 'Nome da Loja',
-      cashierName: 'Nome do Caixa',
+  setup() {
+    const store = useStore();
+    const user = computed(() => store.state.auth.user);
+
+    const userName = computed(() => user.value ? user.value.name : 'Nome do Usuário');
+    const storeName = computed(() => user.value ? user.value.storeName : 'Nome da Loja');
+    const cashierName = computed(() => user.value ? user.value.cashierName : 'Nome do Caixa');
+    const userInfo = computed(() => user.value ? `${user.value.isManager ? 'Administrador' : 'Usuário'} - ${cashierName.value}` : 'Informações do Usuário');
+
+    const logoutAction = async () => {
+      const logouted = await logout();
+      if (logouted) {
+        router.push('/login');
+      }
     };
-  },
-  methods: {
-    logout() {
-      
-    },
-  },
-  computed: {
-    mdiHome() {
-      return mdiHome;
-    },
-    mdiHistory() {
-      return mdiHistory;
-    },
-    mdiLogout() {
-      return mdiLogout;
-    },
+
+    return {
+      mdiHome,
+      mdiHistory,
+      mdiLogout,
+      userName,
+      storeName,
+      userInfo,
+      logoutAction
+    };
   },
 });
 </script>
@@ -128,5 +133,4 @@ export default defineComponent({
 .nav-item:hover .menu-icon {
   color: #a80092;
 }
-
 </style>

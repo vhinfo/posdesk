@@ -4,14 +4,14 @@ import sqlite3 from 'sqlite3';
 export class Cashier extends BaseEntity {
     id: number
     name: string;
-    storeId: string;
+    storeId: number;
     userId: number; 
     userName: string;
 
     static readonly tableName: string = 'cashiers';
     static readonly fields = [
         { name: 'name', type: 'TEXT NOT NULL' },
-        { name: 'storeId', type: 'TEXT' },
+        { name: 'storeId', type: 'INTEGER' },
         { name: 'userId', type: 'INTEGER' },
         { name: 'userName', type: 'TEXT' }
     ];
@@ -19,7 +19,7 @@ export class Cashier extends BaseEntity {
     constructor(db: sqlite3.Database, entityData: {
         id: number,
         name: string,
-        storeId: string,
+        storeId: number,
         userId: number, 
         userName: string
     }) {
