@@ -15,3 +15,7 @@ export async function getStoreCashiers(): Promise<any> {
 export async function setCashier(cashierId:number): Promise<any> {
   return window.authService.setCashier(cashierId);
 }
+
+export async function logout(): Promise<boolean> {
+  return window.authService.makeLogout();
+}

@@ -1,21 +1,23 @@
 <template>
-    <div class="about">
-        EXAMPLE PAGE
-    </div>
-  </template>
+  <div class="sales">
+    Histórico de vendas
+  </div>
+</template>
   
   <script lang="ts">
   import { defineComponent } from 'vue';
   
   export default defineComponent({
-    name: 'About'
+    name: 'Sales'
   });
   </script>
   
   <style scoped>
-  .about {
+  .sales {
     text-align: center;
-    padding: 20px;
+    font-size: 2rem;
+    color: #ffffff;
+    padding: 0.5rem;
   }
   </style>
   

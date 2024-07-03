@@ -61,6 +61,12 @@ export const authService = {
     user.save();
     return false;
   },
+
+  async makeLogout():Promise<boolean>
+  {
+
+    return true;
+  },
   
   async createUser(response: any, accessToken: string): Promise<User> 
   {

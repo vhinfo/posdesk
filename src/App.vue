@@ -1,6 +1,6 @@
 <template>
   <div class="app">
-    <SideMenuBar v-if="showSidebar" />
+    <MenuBar v-if="showSidebar" />
     <main>
       <router-view />
     </main>
@@ -10,13 +10,13 @@
 <script lang="ts">
 import { defineComponent, computed, onMounted, watch } from 'vue';
 import { useRoute, useRouter } from 'vue-router';
-import SideMenuBar from './views/components/sysComponents/SideMenuBar.vue';
+import MenuBar from './views/components/sysComponents/MenuBar.vue';
 import { validateAuth } from './controllers/authController'; // Importe sua função de validação de autenticação aqui
 
 export default defineComponent({
   name: 'App',
   components: {
-    SideMenuBar
+    MenuBar
   },
   setup() {
     const router = useRouter();
@@ -41,7 +41,6 @@ export default defineComponent({
       }
     };
 
-
     // Executa a verificação ao montar o componente e ao alterar de rota
     onMounted(() => {
       checkLogin();
@@ -65,7 +64,5 @@ export default defineComponent({
 
 <style scoped>
 /* Estilos específicos do componente App.vue */
-main {
-  background-color: antiquewhite;
-}
+
 </style>

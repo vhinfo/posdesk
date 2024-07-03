@@ -6,11 +6,11 @@ import About from '../views/About.vue'
 import Sales from '../views/SalesPage.vue'
 
 const routes: Array<RouteRecordRaw> = [
+  { path: '/', name: 'Cashier', component: CashierPage},
+  { path: '/sales', name: 'Sales', component: Sales},
   { path: '/login', name: 'Home', component: LoginPage },
   { path: '/store-selection', name: 'StoreSelect', component: StoreSelectPage},
   { path: '/about', name: 'About', component: About},
-  { path: '/', name: 'Cashier', component: CashierPage},
-  { path: '/sales', name: 'Sales', component: Sales},
 
 ]
 
