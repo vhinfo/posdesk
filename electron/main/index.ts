@@ -169,4 +169,8 @@ ipcMain.handle('set-cashier', async (event, cashierId: number ) => {
   return await authService.setCashier(cashierId);
 });
 
+ipcMain.handle('make-logout', async (event) => {
+  return await authService.makeLogout();
+});
+
 

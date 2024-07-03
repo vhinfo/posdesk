@@ -2,7 +2,7 @@
   <div class="login-page">
     <div class="card">
       <div class="avatar">
-        <img src="../assets/PDV.svg" alt="Logo">
+        <img src="../assets/builderLogoLogin.png" alt="Logo">
       </div>
       <h2>Autenticação</h2>
       <form @submit.prevent="login" ref="form">

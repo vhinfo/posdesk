@@ -119,11 +119,14 @@ contextBridge.exposeInMainWorld('authService', {
   getStoreCashiers: () => {
     return ipcRenderer.invoke('get-store-cashiers');
   },
+  makeLogout: () => {
+    return ipcRenderer.invoke('make-logout');
+  },
   authenticate: (user: string, password: string) => {
     return ipcRenderer.invoke('auth-login', user, password);
   },
   setCashier: (cashierid:number) => {
     return ipcRenderer.invoke('set-cashier',cashierid);
-  }
+  },
 });
 

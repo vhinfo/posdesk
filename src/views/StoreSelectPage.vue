@@ -2,13 +2,10 @@
   <div class="select-page">
     <div class="card">
       <div class="avatar">
-        <img src="../assets/PDV.svg" alt="Logo">
+        <img src="../assets/builderLogoLogin.png" alt="Logo">
       </div>
       <h2>Seleção de Loja e Caixa</h2>
       <form @submit.prevent="submitSelection" ref="form">
-        <!-- <div class="store-info">
-          {{ store.name }}
-        </div> -->
         <select v-model="selectedStoreId" required>
           <option :value="store.id" v-if="store.id">{{ store.name }}</option>
         </select>
@@ -27,9 +24,14 @@
 </template>
 
 <script lang="ts">
-import { defineComponent, onMounted, ref } from 'vue';
+import { defineComponent } from 'vue';
 import { getStoreCashiers, setCashier } from '../controllers/authController';
 import router from '../router';
+
+interface Cashier {
+  id: number;
+  name: string;
+}
 
 export default defineComponent({
   name: 'StoreSelectPage',
@@ -39,9 +41,9 @@ export default defineComponent({
         id: null,
         name: 'Carregando...'
       },
-      cashiers: [],
+      cashiers: [] as Cashier[],
       selectedStoreId: null,
-      selectedCashier:null
+      selectedCashier: null
     };
   },
   methods: {
@@ -59,14 +61,14 @@ export default defineComponent({
       }
     },
     async submitSelection() {
-      try{
+      try {
         if (this.selectedStoreId && this.selectedCashier) {
           await setCashier(this.selectedCashier);
           router.push('/');
         } else {
           console.error('caixa não selecionado');
         }
-      }catch(error){
+      } catch (error) {
         console.error('Erro ao definir caixa:', error);
       }
     },
@@ -148,6 +150,6 @@ button {
 }
 
 button:hover {
-  background-color: rgb(248, 18, 210);
+  background-color: rgb(248, 18, 171);
 }
 </style>

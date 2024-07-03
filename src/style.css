@@ -6,7 +6,7 @@
   font-weight: 400;
   color-scheme: light dark;
   color: rgba(255, 255, 255, 0.87);
-  background-color: dark;
+  background-color: var(--background-color);
   
   /* Remova height e width para ocupar toda a tela */
   /* height: 100vh;
@@ -17,6 +17,11 @@
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
   -webkit-text-size-adjust: 100%;
+
+  width: 100vw;
+  height: 100vh;
+
+  overflow: hidden; 
 }
 
 a {
@@ -34,7 +39,7 @@ body {
   padding: 0;
   min-width: 100%;
   min-height: 100%;
-  overflow: hidden; 
+  
 }
 
 h1 {
