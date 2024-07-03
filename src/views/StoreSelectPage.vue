@@ -4,7 +4,6 @@
       <div class="avatar">
         <img src="../assets/builderLogoLogin.png" alt="Logo">
       </div>
-      <h2>Seleção de Loja e Caixa</h2>
       <form @submit.prevent="submitSelection" ref="form">
         <select v-model="selectedStoreId" required>
           <option :value="store.id" v-if="store.id">{{ store.name }}</option>
@@ -104,7 +103,7 @@ export default defineComponent({
 }
 
 .avatar img {
-  max-width: 100px;
+  max-width: 300px;
   height: auto;
 }
 

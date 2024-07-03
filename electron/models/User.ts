@@ -10,6 +10,7 @@ export class User extends BaseEntity {
     image: string;
     cashierId: number;
     cashierName: string;
+    storeName: string;
 
     public static readonly tableName: string = 'users';
     static readonly fields = [
@@ -19,7 +20,8 @@ export class User extends BaseEntity {
         { name: 'isManager', type: 'INTEGER' },
         { name: 'image', type: 'TEXT' },
         { name: 'cashierId', type: 'INTEGER' },
-        { name: 'cashierName', type: 'TEXT' }
+        { name: 'cashierName', type: 'TEXT' },
+        { name: 'storeName', type: 'TEXT' }
     ];
 
     constructor(db: sqlite3.Database, entityData: {
@@ -30,7 +32,8 @@ export class User extends BaseEntity {
         isManager: boolean,
         image: string,
         cashierId: number,
-        cashierName: string
+        cashierName: string,
+        storeName: string
     }) {
         super(db);
         Object.assign(this, entityData);
@@ -58,7 +61,8 @@ export class User extends BaseEntity {
                             isManager: row.isManager === 1,
                             image: row.image,
                             cashierId: row.cashierId,
-                            cashierName: row.cashierName
+                            cashierName: row.cashierName,
+                            storeName: row.storeName
                         });
                         resolve(user);
                     } else {

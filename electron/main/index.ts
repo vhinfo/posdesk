@@ -43,8 +43,10 @@ const { autoUpdater } = require('electron-updater');
 
 async function createWindow() {
   win = new BrowserWindow({
-    title: 'Main window',
-    icon: path.join(process.env.VITE_PUBLIC, 'favicon.ico'),
+    title: 'PosDesk',
+    width: 900,
+    height: 600,
+    icon: path.join(__dirname, '/public/favicon.png'),
     webPreferences: {
       preload,
     },
@@ -153,24 +155,23 @@ function checkForUpdates() {
 }
 
 // AUTH
-ipcMain.handle('auth-validate', async (event, args) => {
-  return await authService.validateAuthentication(args);
-});
 
 ipcMain.handle('auth-login', async (event, user, password) => {
   return await authService.authenticate(user, password);
 });
-
+ipcMain.handle('make-logout', async (event) => {
+  return await authService.makeLogout();
+});
 ipcMain.handle('get-store-cashiers', async (event, ) => {
   return await authService.getStoreCashiers();
 });
 
+ipcMain.handle('auth-validate', async (event, args) => {
+  return await authService.validateAuthentication(args);
+});
 ipcMain.handle('set-cashier', async (event, cashierId: number ) => {
   return await authService.setCashier(cashierId);
 });
 
-ipcMain.handle('make-logout', async (event) => {
-  return await authService.makeLogout();
-});
 
 

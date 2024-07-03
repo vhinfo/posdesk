@@ -11,7 +11,8 @@
 import { defineComponent, computed, onMounted, watch } from 'vue';
 import { useRoute, useRouter } from 'vue-router';
 import MenuBar from './views/components/sysComponents/MenuBar.vue';
-import { validateAuth } from './controllers/authController'; // Importe sua função de validação de autenticação aqui
+import { validateAuth } from './controllers/authController';
+import { useStore } from 'vuex';
 
 export default defineComponent({
   name: 'App',
@@ -21,18 +22,18 @@ export default defineComponent({
   setup() {
     const router = useRouter();
     const route = useRoute();
-    console.log(route.path);
+    const store = useStore();
 
-    // Função para verificar o status de autenticação
     const checkLogin = async () => {
       try {
-        const isAuthenticated = await validateAuth();
-        if (!isAuthenticated && route.path !== '/login' && route.path !== '/store-selection') {
+        const user = await validateAuth();
+        if (!user && route.path !== '/login' && route.path !== '/store-selection') {
           router.replace('/login');
         }
+        console.log(user)
+        store.commit('auth/setUser', user);
       } catch (error:any) {
         console.error('Erro ao validar o token:', error);
-        // Verificar se a mensagem de erro contém "usuario sem caixa definido"
         if (error.message && error.message.includes("usuario sem caixa definido")) {
           router.push('/store-selection');
         } else {
@@ -41,7 +42,6 @@ export default defineComponent({
       }
     };
 
-    // Executa a verificação ao montar o componente e ao alterar de rota
     onMounted(() => {
       checkLogin();
     });
@@ -50,7 +50,6 @@ export default defineComponent({
       checkLogin();
     });
 
-    // Computação para exibir ou não o sidebar com base na rota
     const showSidebar = computed(() => {
       return route.path !== '/login' && route.path !== '/store-selection';
     });
@@ -61,8 +60,3 @@ export default defineComponent({
   }
 });
 </script>
-
-<style scoped>
-/* Estilos específicos do componente App.vue */
-
-</style>

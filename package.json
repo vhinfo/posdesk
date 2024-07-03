@@ -19,7 +19,9 @@
     "jsonwebtoken": "^9.0.2",
     "roboto-fontface": "*",
     "sqlite3": "5.1.6",
-    "vue-router": "^4.4.0"
+    "vue-router": "^4.4.0",
+    "vuex": "^4.0.2",
+    "vuex-persistedstate": "^4.1.0"
   },
   "devDependencies": {
     "@types/jsonwebtoken": "^9.0.6",
