@@ -40,13 +40,13 @@ let win: BrowserWindow | null = null
 const preload = path.join(__dirname, '../preload/index.mjs')
 const indexHtml = path.join(RENDERER_DIST, 'index.html')
 const { autoUpdater } = require('electron-updater');
-
+const iconPatch = path.join(process.env.VITE_PUBLIC, 'win-icon.png');
 async function createWindow() {
   win = new BrowserWindow({
     title: 'PosDesk',
-    width: 900,
+    width: 1000,
     height: 600,
-    icon: path.join(__dirname, '/public/favicon.png'),
+    icon: iconPatch,
     webPreferences: {
       preload,
     },
@@ -134,8 +134,9 @@ ipcMain.handle('open-win', (_, arg) => {
   const childWindow = new BrowserWindow({
     webPreferences: {
       preload,
-      nodeIntegration: true,
-      contextIsolation: false,
+      // DO NOT ENABLE THIS TWO OPTIONS
+      // nodeIntegration: true,
+      // contextIsolation: false,
     },
   })
 
