@@ -4,7 +4,7 @@
       <div class="avatar">
         <img src="../assets/builderLogoLogin.png" alt="Logo">
       </div>
-      <form @submit.prevent="login" ref="form">
+      <form @submit.prevent="handleLogin">
         <input
           v-model="userTemp.user"
           type="text"
@@ -26,34 +26,47 @@
 </template>
 
 <script lang="ts">
-import { defineComponent } from 'vue';
+import { defineComponent, ref } from 'vue';
 import { login } from '../controllers/authController';
 import router from '../router';
+import { useStore } from 'vuex';
 
 export default defineComponent({
   name: 'LoginPage',
-  data() {
-    return {
-      passwordShow: false,
-      userTemp: {
-        user: '',
-        password: '',
-      },
-    };
-  },
-  methods: {
-    async login() {
+  setup() {
+    const store = useStore();
+    const passwordShow = ref(false);
+    const userTemp = ref({
+      user: '',
+      password: '',
+    });
+
+    const handleLogin = async () => {
       try {
-        let user = await login(this.userTemp.user, this.userTemp.password);
+        let user = await login(userTemp.value.user, userTemp.value.password);
         if (user) {
           router.push('/store-selection');
         } else {
           console.error('Usuário ou senha inválidos');
+          store.dispatch('messageHandle/alert', {
+            message: 'Usuário ou senha inválidos',
+            type: 'error',
+          });
         }
-      } catch (error) {
-        console.error('Erro durante a autenticação:', error);
+      } catch (error:any) {
+        console.error('Erro durante a autenticação:', error   );
+        store.dispatch('messageHandle/alert', {
+          message: error.message || 'Erro durante a autenticação',
+          type: 'error',
+        });
       }
-    },
+    };
+
+    return {
+      passwordShow,
+      userTemp,
+      handleLogin
+    };
   },
 });
 </script>
