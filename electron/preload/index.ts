@@ -1,5 +1,5 @@
 import { ipcRenderer, contextBridge } from 'electron';
-import { authService } from '../services/authService';
+// import { authService } from '../services/authService';
 
 // --------- Expose some API to the Renderer process ---------
 contextBridge.exposeInMainWorld('ipcRenderer', {
@@ -129,4 +129,12 @@ contextBridge.exposeInMainWorld('authService', {
     return ipcRenderer.invoke('set-cashier',cashierid);
   },
 });
+
+// PRODUCTS
+contextBridge.exposeInMainWorld('productService', {
+  getProducts: (page:number|null, sku:number|null) => {
+    return ipcRenderer.invoke('get-products',page,sku);
+  },
+});
+
 

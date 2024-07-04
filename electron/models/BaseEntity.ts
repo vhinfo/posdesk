@@ -14,12 +14,14 @@ export abstract class BaseEntity {
         const columns = Object.keys(entityData).join(', ');
         const values = Object.values(entityData).map(value => {
             if (typeof value === 'string') {
+                // Remove single quotes from the string
+                value = value.replace(/'/g, '');
                 return `'${value}'`;
             } else {
                 return value === null || value === undefined || value === '' ? 'NULL' : value;
             }
         }).join(', ');
-
+    
         if (await this.exists(this['id'])) {
             await this.update();
         } else {
@@ -27,6 +29,7 @@ export abstract class BaseEntity {
             await this.run(sql);
         }
     }
+    
 
     private async exists(id: number | undefined): Promise<boolean> {
         if (!id) return false;
@@ -150,7 +153,7 @@ export abstract class BaseEntity {
         });
     }
 
-    private static async all(db: sqlite3.Database, sql: string): Promise<any[]> {
+    public static async all(db: sqlite3.Database, sql: string): Promise<any[]> {
         return new Promise<any[]>((resolve, reject) => {
             db.all(sql, (err, rows) => {
                 if (err) {

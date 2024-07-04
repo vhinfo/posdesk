@@ -11,6 +11,7 @@ export class User extends BaseEntity {
     cashierId: number;
     cashierName: string;
     storeName: string;
+    productUpdatedAt: Date|null|string;
 
     public static readonly tableName: string = 'users';
     static readonly fields = [
@@ -21,7 +22,8 @@ export class User extends BaseEntity {
         { name: 'image', type: 'TEXT' },
         { name: 'cashierId', type: 'INTEGER' },
         { name: 'cashierName', type: 'TEXT' },
-        { name: 'storeName', type: 'TEXT' }
+        { name: 'storeName', type: 'TEXT' },
+        { name: 'productUpdatedAt', type: 'TEXT' }
     ];
 
     constructor(db: sqlite3.Database, entityData: {
@@ -33,7 +35,8 @@ export class User extends BaseEntity {
         image: string,
         cashierId: number,
         cashierName: string,
-        storeName: string
+        storeName: string,
+        productUpdatedAt: Date|null|string
     }) {
         super(db);
         Object.assign(this, entityData);
@@ -42,34 +45,4 @@ export class User extends BaseEntity {
     get tableName(): string {
         return User.tableName;
     }
-
-
-    public static async getFirstUser(db: sqlite3.Database): Promise<User | null> {
-        return new Promise((resolve, reject) => {
-            const query = `SELECT * FROM ${User.tableName} LIMIT 1`;
-            db.get(query, (err, row:any) => {
-                if (err) {
-                    console.error(`Error fetching first ${User.tableName}:`, err);
-                    reject(err);
-                } else {
-                    if (row) {
-                        const user = new User(db, {
-                            id: row.id,
-                            name: row.name,
-                            accessToken: row.accessToken,
-                            profession: row.profession,
-                            isManager: row.isManager === 1,
-                            image: row.image,
-                            cashierId: row.cashierId,
-                            cashierName: row.cashierName,
-                            storeName: row.storeName
-                        });
-                        resolve(user);
-                    } else {
-                        resolve(null);
-                    }
-                }
-            });
-        });
-    }    
 }

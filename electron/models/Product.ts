@@ -40,4 +40,11 @@ export class Product extends BaseEntity {
         return Product.tableName;
     }
 
+    static async findByPage(db: sqlite3.Database, page: number, pageSize: number): Promise<Product[]> {
+        const offset = (page - 1) * pageSize;
+        const sql = `SELECT * FROM ${this.tableName} LIMIT ${pageSize} OFFSET ${offset}`;
+        const rows = await BaseEntity.all(db, sql);
+        return rows.map(row => new this(db, row));
+    }
+
 }

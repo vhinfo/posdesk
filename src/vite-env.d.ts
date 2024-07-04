@@ -26,5 +26,17 @@ interface Window {
     getStoreCashiers: () => Promise<any>,
     authenticate: (user: string, password: string) => Promise<boolean>,
     setCashier: (cashierId:number) => Promise<boolean>,
+  },
+  productService: {
+    getProducts: (page: number|null, sku:number|null) => Promise<{
+      id: number,
+      description: string,
+      sku: string,
+      categoryId: number|null,
+      categoryName: string,
+      image: string,
+      brand: string,
+      price: number
+    }[]|undefined>
   }
 }
