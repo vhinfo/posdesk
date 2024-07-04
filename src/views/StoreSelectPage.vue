@@ -5,6 +5,10 @@
         <img src="../assets/builderLogoLogin.png" alt="Logo">
       </div>
       <form @submit.prevent="submitSelection" ref="form">
+        <div class="message-alert-container">
+          <!-- Componente MessageAlert -->
+          <MessageAlert />
+        </div>
         <select v-model="selectedStoreId" required>
           <option :value="store.id" v-if="store.id">{{ store.name }}</option>
         </select>
@@ -26,6 +30,8 @@
 import { defineComponent } from 'vue';
 import { getStoreCashiers, setCashier } from '../controllers/authController';
 import router from '../router';
+import { useStore } from 'vuex';
+import MessageAlert from './components/sysComponents/MessageAlert.vue';
 
 interface Cashier {
   id: number;
@@ -34,6 +40,9 @@ interface Cashier {
 
 export default defineComponent({
   name: 'StoreSelectPage',
+  components: {
+    MessageAlert,
+  },
   data() {
     return {
       store: {
@@ -65,9 +74,13 @@ export default defineComponent({
           await setCashier(this.selectedCashier);
           router.push('/');
         } else {
-          console.error('caixa não selecionado');
+          throw Error('Caixa não selecionado');
         }
-      } catch (error) {
+      } catch (error:any) {
+        useStore().dispatch('messageHandle/alert', {
+          message: 'não foi possível definir um caixa',
+          type: 'error',
+        });
         console.error('Erro ao definir caixa:', error);
       }
     },
@@ -137,7 +150,7 @@ select {
   color: #ffffff;
 }
 
-button {
+.button {
   width: 90%;
   padding: 10px;
   border: none;
@@ -148,7 +161,11 @@ button {
   margin-top: 10px;
 }
 
-button:hover {
+.button:hover {
   background-color: rgb(248, 18, 171);
+}
+
+.message-alert-container {
+  margin-bottom: 10px;
 }
 </style>

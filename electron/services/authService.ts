@@ -35,6 +35,10 @@ export const authService = {
   async authenticate(user: string, password: string): Promise<boolean> 
   {
     const token = await login(user, password);
+    console.log('TRYING LOGIN',token);
+    if(!token || 'Usuário não encontrado' === token){
+      throw Error('login ou senha errados');
+    }
     const firstconfigs = await getFirstConfigs(token);
     let savedUser = await this.createUser(firstconfigs, token);
     let store = await this.createStore(firstconfigs);
