@@ -11,9 +11,9 @@ import { Cupom } from '../models/Cupom.js';
 const db = DatabaseService.getDBInstance();
 
 export const authService = {
-  async validateAuthentication(args: any): Promise<{ name:string, storeName:string, cashierName: string, isManager:boolean }> 
+  async validateAuthentication(args: any): Promise<{ name:string, storeName:string, cashierName: string, isManager:boolean }>
   {
-    const user = await User.getFirstUser(db);
+    const user = await User.findFirst(db);
     if(!user) {
       throw Error('sem usuário salvo em cache')
     }
@@ -35,7 +35,6 @@ export const authService = {
   async authenticate(user: string, password: string): Promise<boolean> 
   {
     const token = await login(user, password);
-    console.log('TRYING LOGIN',token);
     if(!token || 'Usuário não encontrado' === token){
       throw Error('login ou senha errados');
     }
@@ -50,7 +49,7 @@ export const authService = {
 
   async getStoreCashiers(): Promise<{ store: Store, cashiers: Cashier[] }> 
   {
-      const user = await User.getFirstUser(db);
+      const user = await User.findFirst(db);
       if (!user) {
         throw new Error('Nenhum usuário encontrado');
       }
@@ -64,7 +63,7 @@ export const authService = {
 
   async setCashier(cashierId:number):Promise<boolean>
   {
-    let user = await User.getFirstUser(db);
+    let user = await User.findFirst(db);
     let cashier = await Cashier.findById(db, cashierId);
     let store = await Store.findById(db,cashier.storeId);
     let newToken = await setCashier(cashierId,user.accessToken);
@@ -78,12 +77,17 @@ export const authService = {
 
   async makeLogout():Promise<boolean>
   {
-    User.clear(db);
+    const user = await User.findFirst(db);
+    user.accessToken = null;
+    user.save();
+
     return true;
   },
   
   async createUser(response: any, accessToken: string): Promise<User> 
   {
+    const oldUser = await User.findFirst(db);
+
     const user = new User(db, {
       id: response.user_id,
       name: response.user_name,
@@ -94,6 +98,7 @@ export const authService = {
       cashierId: response.cashier_id,
       cashierName: response.cashier_name,
       storeName: null,
+      productUpdatedAt: oldUser.productUpdatedAt??null
     });
 
     // clear all users

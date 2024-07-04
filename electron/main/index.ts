@@ -6,6 +6,7 @@ import os from 'os';
 import log from 'electron-log';
 import { authService } from '../services/authService';
 import { DatabaseService } from '../services/databaseService'; 
+import { productService } from '../services/productService'; 
 
 
 log.initialize();
@@ -156,7 +157,6 @@ function checkForUpdates() {
 }
 
 // AUTH
-
 ipcMain.handle('auth-login', async (event, user, password) => {
   return await authService.authenticate(user, password);
 });
@@ -172,6 +172,11 @@ ipcMain.handle('auth-validate', async (event, args) => {
 });
 ipcMain.handle('set-cashier', async (event, cashierId: number ) => {
   return await authService.setCashier(cashierId);
+});
+
+// PRODUCTS
+ipcMain.handle('get-products', async (event, page:number|null, sku:number|null) => {
+  return await productService.getProduct(page,sku);
 });
 
 
