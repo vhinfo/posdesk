@@ -132,8 +132,8 @@ contextBridge.exposeInMainWorld('authService', {
 
 // PRODUCTS
 contextBridge.exposeInMainWorld('productService', {
-  getProducts: (page:number|null, sku:number|null) => {
-    return ipcRenderer.invoke('get-products',page,sku);
+  getProducts: (page:number|null, sku:number|null, force:boolean) => {
+    return ipcRenderer.invoke('get-products',page, sku, force);
   },
 });
 

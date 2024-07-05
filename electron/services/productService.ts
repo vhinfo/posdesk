@@ -10,10 +10,10 @@ const db = DatabaseService.getDBInstance();
 
 export const productService =
 {
-    async getProduct (page:number|null, sku:number|null):Promise <Product[]|undefined>
+    async getProduct (page:number|null, sku:number|null, force:boolean ):Promise <Product[]|undefined>
     {
         let user = await User.findFirst(db);
-        if(await this.needGetProductFromApi(user)){
+        if(force || await this.needGetProductFromApi(user)){
             await this.updateProductBase(user.accessToken);
         }
 
@@ -31,14 +31,14 @@ export const productService =
     },
 
     async needGetProductFromApi(user: User): Promise<boolean> {
-        if(user.productUpdatedAt === 'NULL' || undefined === await Product.findFirst(db)){
-            console.log(
-                'PRODUTOS DESATUALIZADOS POR ESTAR VAZIO OU USUARIO SEM UPDATE PRODUTO ',
-                'USER ',
-                user.productUpdatedAt,
-                'FIRST PRODUCT ',
-                await Product.findFirst(db)
-            );
+        if(!user || user.productUpdatedAt === 'NULL' || undefined === await Product.findFirst(db)){
+            // console.log(
+            //     'PRODUTOS DESATUALIZADOS POR ESTAR VAZIO OU USUARIO SEM UPDATE PRODUTO ',
+            //     'USER ',
+            //     user.productUpdatedAt,
+            //     'FIRST PRODUCT ',
+            //     await Product.findFirst(db)
+            // );
             return true;
         }
 
@@ -58,10 +58,10 @@ export const productService =
         const now = new Date();
         const lastUpdate = new Date(user.productUpdatedAt);
         if (differenceInMilliseconds(now, lastUpdate) > intervalMilliseconds ) {
-            console.log('tempo de update produto')
+            // console.log('tempo de update produto')
             return true;
         } else {
-            console.log('fora tempo produto')
+            // console.log('fora tempo produto')
             return false;
         }
     },
@@ -72,8 +72,8 @@ export const productService =
         Category.clear(db);
         let productsInfo = await getProducts(token);
 
-        let categorys = await this.saveCategorys(productsInfo);
-        let products = await this.saveProducts(productsInfo);
+        await this.saveCategorys(productsInfo);
+        await this.saveProducts(productsInfo);
 
         return true;
     },
