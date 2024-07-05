@@ -32,11 +32,7 @@ import { getStoreCashiers, setCashier } from '../controllers/authController';
 import router from '../router';
 import { useStore } from 'vuex';
 import MessageAlert from './components/sysComponents/MessageAlert.vue';
-
-interface Cashier {
-  id: number;
-  name: string;
-}
+import { Cashier } from '../types';
 
 export default defineComponent({
   name: 'StoreSelectPage',

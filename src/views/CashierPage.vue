@@ -8,6 +8,7 @@
     
     <!-- item cart and sale info right column -->
     <div class="cart-column">
+      <CartList />
       <!-- items select component -->
       <!-- sale resuming component -->
       <!-- 4 buttons: addObservation, change products, clear sale, select payment -->
@@ -18,11 +19,13 @@
 <script lang="ts">
 import { defineComponent } from 'vue';
 import ProductList from './components/cashier/ProductsList.vue';
+import CartList from './components/cashier/CartList.vue';
 
 export default defineComponent({
   name: 'CashierPage',
   components: {
     ProductList,
+    CartList
   },
 });
 </script>
@@ -37,7 +40,6 @@ export default defineComponent({
 .product-column {
   flex: 1;
   padding: 10px;
-  border-radius: 16px;
 }
 
 .cart-column {

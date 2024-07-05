@@ -74,8 +74,8 @@ export default defineComponent({
 <style scoped>
   .message-alert {
     position: fixed;
-    top: 20px;
-    right: 20px;
+    top: 5px;
+    right: 30%;
     background-color: #a80092;
     color: #fff;
     padding-left: 1em;

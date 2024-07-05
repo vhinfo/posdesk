@@ -1,16 +1,5 @@
 import { Module, ActionContext } from 'vuex';
-
-// Tipos
-interface Alert {
-  message: string;
-  type: 'error' | 'success' | 'info' | 'warning';
-  active: boolean;
-}
-
-interface MessageState {
-  alert: Alert;
-  timeoutId: NodeJS.Timeout | null; // Tipo para armazenar o ID do timeout
-}
+import { Alert, MessageState } from '../../types';
 
 const state: MessageState = {
   alert: {
