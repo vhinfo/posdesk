@@ -1,15 +1,5 @@
 import { Module, MutationTree, GetterTree } from 'vuex';
-
-interface User {
-  name: string;
-  storeName: string;
-  cashierName: string;
-  isManager: boolean;
-}
-
-interface AuthState {
-  user: User | null;
-}
+import { AuthState, User } from '../../types';
 
 const state: AuthState = {
   user: null,

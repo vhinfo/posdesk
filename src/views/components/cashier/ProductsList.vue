@@ -15,7 +15,7 @@
             <SvgIcon type="mdi" :path="mdiPackageVariantClosed" class="no-products-icon" width="250" height="250" />
             <p>Sem produtos no momento</p>
         </div>
-        <div v-else class="product-cards" >
+        <div v-else class="product-cards"  >
             <div v-for="product in products" :key="product.id" class="product-card" @click="sendToCart(product)">
             <div class="product-image">
                 <img v-if="product.image" :src="product.image" :alt="product.description" />
@@ -45,21 +45,13 @@ import { getProducts } from '../../../controllers/productController';
 import SvgIcon from '@jamescoyle/vue-icon';
 import { mdiPackageVariantClosed, mdiRefresh, mdiLoading, mdiChevronRight, mdiChevronLeft, mdiAlert  } from '@mdi/js';
 import { useStore } from 'vuex';
-
-interface Product {
-    id: number;
-    description: string;
-    sku: string;
-    categoryName: string;
-    image: string;
-    brand: string;
-    price: number;
-}
+import { addProductToCart } from '../../../controllers/cashierController';
+import { Product } from '../../../types';
 
 export default defineComponent({
     name: 'ProductList',
     components: {
-    SvgIcon,
+        SvgIcon,
     },
     setup() {
         const products = ref<Product[]>([]);
@@ -85,8 +77,8 @@ export default defineComponent({
             } catch (error) {
                 console.error('Erro ao obter produtos:', error);
                 store.dispatch('messageHandle/alert', {
-                    message: 'Erro ao obter os produtos!',
-                    type: 'Erro',
+                    message: 'error ao obter os produtos!',
+                    type: 'error',
                 });
             } finally {
                 loading.value = false;
@@ -94,17 +86,32 @@ export default defineComponent({
         };
 
         const nextPage = async () => {
-        currentPage.value++;
-        await fetchProducts(currentPage.value,false);
+            try{
+                currentPage.value++;
+                await fetchProducts(currentPage.value,false);
+            }catch (error) {
+                console.error(error)
+                store.dispatch('messageHandle/alert', {
+                    message: 'Falha ao avançar a página',
+                    type: 'error',
+                });
+            }
         };
 
         const previusPage = async () => {
-            if(currentPage.value > 0){
-                currentPage.value--;
+            try{
+                if(currentPage.value > 0){
+                    currentPage.value--;
+                }
+                await fetchProducts(currentPage.value,false);
+            }catch (error) {
+                console.error(error)
+                store.dispatch('messageHandle/alert', {
+                    message: 'Falha ao voltar a página',
+                    type: 'error',
+                });
             }
-            await fetchProducts(currentPage.value,false);
         };
-
 
         const searchProducts = async () => {
             try {
@@ -118,20 +125,26 @@ export default defineComponent({
                     products.value = result as Product[];
                 }
             } catch (error) {
+                console.error(error)
                 store.dispatch('messageHandle/alert', {
-                    message: 'Erro ao obter os produtos!',
-                    type: 'Erro',
+                    message: 'error ao obter os produtos!',
+                    type: 'error',
                 });
             }
         };
+
         const sendToCart = async (product:Product) => {
             try{
-                console.log('PRODUCT: ',product.sku)
-            }catch (error) {
-                console.log(error)
+                await addProductToCart(product);
                 store.dispatch('messageHandle/alert', {
-                    message: 'ao enviar produro ao carrinho!',
-                    type: 'Erro',
+                    message: `Produto ${product.sku} adicionado ao carrinho!`,
+                    type: 'success',
+                });
+            }catch (error) {
+                console.error(error)
+                store.dispatch('messageHandle/alert', {
+                    message: 'error ao enviar produto ao carrinho!',
+                    type: 'error',
                 });
             }
         }
@@ -221,7 +234,7 @@ export default defineComponent({
     align-items: center;
     justify-content: center;
     flex-direction: column;
-    height: 200px;
+    height: 93vh;
     font-size: 1.2em;
 }
 
@@ -242,6 +255,7 @@ export default defineComponent({
 .no-products {
     text-align: center;
     color: gray;
+    height: 93vh;
 }
 
 .no-products-icon {
@@ -258,9 +272,8 @@ export default defineComponent({
     padding: 8px
 }
 
-/* Custom scrollbar styles */
 .product-cards::-webkit-scrollbar {
-    width: 3px; /* Largura da barra de rolagem */
+    width: 3px;
 }
 
 .product-cards::-webkit-scrollbar-thumb {
