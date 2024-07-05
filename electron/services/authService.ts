@@ -87,7 +87,9 @@ export const authService = {
   async createUser(response: any, accessToken: string): Promise<User> 
   {
     const oldUser = await User.findFirst(db);
-
+    if(oldUser && undefined !== oldUser.productUpdatedAt){
+      response.productUpdatedAt =  oldUser.productUpdatedAt;
+    }
     const user = new User(db, {
       id: response.user_id,
       name: response.user_name,
@@ -98,7 +100,7 @@ export const authService = {
       cashierId: response.cashier_id,
       cashierName: response.cashier_name,
       storeName: null,
-      productUpdatedAt: oldUser.productUpdatedAt??null
+      productUpdatedAt: response.productUpdatedAt
     });
 
     // clear all users

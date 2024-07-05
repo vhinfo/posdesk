@@ -175,8 +175,8 @@ ipcMain.handle('set-cashier', async (event, cashierId: number ) => {
 });
 
 // PRODUCTS
-ipcMain.handle('get-products', async (event, page:number|null, sku:number|null) => {
-  return await productService.getProduct(page,sku);
+ipcMain.handle('get-products', async (event, page:number|null, sku:number|null, force:boolean) => {
+  return await productService.getProduct(page, sku, force);
 });
 
 

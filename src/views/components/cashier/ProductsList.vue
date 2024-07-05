@@ -1,197 +1,319 @@
 <template>
     <div class="product-list">
-    <div class="search-bar">
-        <input v-model="searchQuery" type="text" placeholder="Buscar por SKU..." />
-        <button @click="searchProducts" class="search-button">Buscar</button>
-    </div>
-    <div v-if="products.length === 0" class="no-products">
-        <SvgIcon type="mdi" :path="mdiPackageVariantClosed" class="no-products-icon" width="500" height="500" />
-        <p>Sem produtos no momento</p>
-    </div>
-    <div v-else class="product-cards">
-        <div v-for="product in products" :key="product.id" class="product-card">
-        <div class="product-image">
-            <img v-if="product.image" :src="product.image" :alt="product.description" />
-            <SvgIcon type="mdi" v-else :path="mdiPackageVariantClosed" class="default-icon" width="100" height="100"/>
+        <div class="search-bar">
+            <input v-model.number="searchQuery" type="number" placeholder="Buscar por SKU ou código de barras..." autofocus/>
+            <button @keypress="searchProducts" @click="searchProducts" class="search-button">Buscar</button>
+            <button @click="forceUpdateProducts" class="update-button">
+            <SvgIcon type="mdi" :path="mdiRefresh" />
+            </button>
         </div>
-        <div class="product-details">
-            <h3><b>{{ product.sku }}</b></h3>
-            <h3>{{ product.description }}</h3>
-            <p>{{ product.brand }}</p>
-            <p>{{ formatPrice(product.price) }}</p>
+        <div v-if="loading" class="loading-indicator">
+            <SvgIcon type="mdi" :path="mdiLoading" class="loading-icon"  width="50" height="50" />
+            <p>Baixando produtos...</p>
         </div>
+        <div v-else-if="products.length === 0" class="no-products">
+            <SvgIcon type="mdi" :path="mdiPackageVariantClosed" class="no-products-icon" width="250" height="250" />
+            <p>Sem produtos no momento</p>
         </div>
-    </div>
+        <div v-else class="product-cards" >
+            <div v-for="product in products" :key="product.id" class="product-card" @click="sendToCart(product)">
+            <div class="product-image">
+                <img v-if="product.image" :src="product.image" :alt="product.description" />
+                <SvgIcon type="mdi" v-else :path="mdiPackageVariantClosed" class="default-icon" width="80" height="80" />
+            </div>
+            <div class="product-details">
+                <b>{{ product.sku }}</b><br>
+                {{ product.description }}<br>
+                {{ product.brand }}<br>
+                <b> {{ formatPrice(product.price) }}</b>
+                <!-- report wrong price feature -->
+                <!-- <SvgIcon type="mdi" :path="mdiAlert" class="report-icon" width="20" height="20" /></b> -->
+            </div>
+            </div>
+        </div>
+        <div class="pagination">
+            <SvgIcon type="mdi" :path="mdiChevronLeft" @click="previusPage()" width="100"> Anterior</SvgIcon>
+            <p>Páginas</p>
+            <SvgIcon type="mdi" :path="mdiChevronRight" @click="nextPage()" width="100"> Próxima</SvgIcon>
+        </div>
     </div>
 </template>
 
 <script lang="ts">
-    import { defineComponent, ref, onMounted } from 'vue';
-    import { getProducts } from '../../../controllers/productController';
-    import SvgIcon from '@jamescoyle/vue-icon';
-    import { mdiPackageVariantClosed } from '@mdi/js';
-    import { useStore } from 'vuex';
+import { defineComponent, ref, computed, onMounted  } from 'vue';
+import { getProducts } from '../../../controllers/productController';
+import SvgIcon from '@jamescoyle/vue-icon';
+import { mdiPackageVariantClosed, mdiRefresh, mdiLoading, mdiChevronRight, mdiChevronLeft, mdiAlert  } from '@mdi/js';
+import { useStore } from 'vuex';
 
-    interface Product {
-        id: number;
-        description: string;
-        sku: string;
-        categoryName: string;
-        image: string;
-        brand: string;
-        price: number;
-    }
+interface Product {
+    id: number;
+    description: string;
+    sku: string;
+    categoryName: string;
+    image: string;
+    brand: string;
+    price: number;
+}
 
-    export default defineComponent({
-        name: 'ProductList',
-        components: {
-        SvgIcon,
-        },
-        setup() {
-            const products = ref<Product[]>([]);
-            const searchQuery = ref<number | null>(null);
-            const store = useStore();
+export default defineComponent({
+    name: 'ProductList',
+    components: {
+    SvgIcon,
+    },
+    setup() {
+        const products = ref<Product[]>([]);
+        const searchQuery = ref<number | null>(null);
+        const loading = ref<boolean>(false);
+        const currentPage = ref<number>(1);
+        const store = useStore();
+        const user = computed(() => store.state.auth.user);
 
-            const fetchProducts = async () => {
-                try {
+        const fetchProducts = async (page:number, forceUpdate: boolean = false) => {
+            try {
+                loading.value = true;
                 store.dispatch('messageHandle/alert', {
-                    message: 'Baixando produtos!',
+                    message: 'Baixando produtos...',
                     type: 'info',
                 });
-                const result = await getProducts(null, null);
-                console.log('PRODUTOS RETORNADOS ', result?.length, 'todos: ', result);
+                const result = await getProducts(page, null, forceUpdate);
                 store.dispatch('messageHandle/alert', {
                     message: 'Produtos Atualizados!',
                     type: 'success',
                 });
-                if (result) {
-                    products.value = result as Product[];
-                }
-                } catch (error) {
+                products.value = result || [];
+            } catch (error) {
                 console.error('Erro ao obter produtos:', error);
                 store.dispatch('messageHandle/alert', {
                     message: 'Erro ao obter os produtos!',
                     type: 'Erro',
                 });
-                }
-            };
+            } finally {
+                loading.value = false;
+            }
+        };
 
-            const searchProducts = async () => {
-                try {
-                const result = await getProducts(null, searchQuery.value);
-                console.log(result);
+        const nextPage = async () => {
+        currentPage.value++;
+        await fetchProducts(currentPage.value,false);
+        };
+
+        const previusPage = async () => {
+            if(currentPage.value > 0){
+                currentPage.value--;
+            }
+            await fetchProducts(currentPage.value,false);
+        };
+
+
+        const searchProducts = async () => {
+            try {
+                let search: number | null = searchQuery.value;
+
+                if (null !== searchQuery.value && searchQuery.value < 10) {
+                    search = null;
+                }
+                const result = await getProducts(null, search, false);
                 if (result) {
                     products.value = result as Product[];
                 }
-                } catch (error) {
-                console.error('Erro ao buscar produtos:', error);
-                }
-            };
-            
-            const formatPrice = (price: number): string => {
-                return price.toLocaleString('pt-BR', {
-                    style: 'currency',
-                    currency: 'BRL',
+            } catch (error) {
+                store.dispatch('messageHandle/alert', {
+                    message: 'Erro ao obter os produtos!',
+                    type: 'Erro',
                 });
-                };
+            }
+        };
+        const sendToCart = async (product:Product) => {
+            try{
+                console.log('PRODUCT: ',product.sku)
+            }catch (error) {
+                console.log(error)
+                store.dispatch('messageHandle/alert', {
+                    message: 'ao enviar produro ao carrinho!',
+                    type: 'Erro',
+                });
+            }
+        }
 
-            onMounted(() => {
-                fetchProducts();
+        const forceUpdateProducts = async () => {
+            await fetchProducts(currentPage.value,true);
+        };
+
+        const formatPrice = (price: number): string => {
+            return price.toLocaleString('pt-BR', {
+            style: 'currency',
+            currency: 'BRL',
             });
+        };
 
-            return {
-                products,
-                searchQuery,
-                mdiPackageVariantClosed,
-                formatPrice,
-                searchProducts,
-            };
-        },
-    });
+        onMounted(() => {
+            if (user.value) {
+                fetchProducts(currentPage.value);
+            }
+        });
+
+        return {
+            products,
+            searchQuery,
+            loading,
+            mdiPackageVariantClosed,
+            mdiRefresh,
+            mdiLoading,
+            mdiChevronRight,
+            mdiChevronLeft,
+            mdiAlert,
+            formatPrice,
+            searchProducts,
+            forceUpdateProducts,
+            previusPage,
+            nextPage,
+            sendToCart
+        };
+    },
+});
 </script>
 
 <style scoped>
-    .product-list {
-        display: flex;
-        flex-direction: column;
-        align-items: center;
-        width: 100%;
-        height: 93vh;
-        margin-right: 10px;
-    }
+.product-list {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    width: 100%;
+    height: 93vh;
+    margin-right: 10px;
+}
 
-    .search-bar {
-        width: 100%;
-        margin-bottom: 20px;
-        display: flex;
-    }
+.search-bar {
+    width: 100%;
+    margin-bottom: 20px;
+    display: flex;
+}
 
-    .search-bar input {
-        flex: 1;
-        padding: 10px;
-        border: 1px solid #ccc;
-        border-radius: 4px 0 0 4px;
-    }
+.search-bar input {
+    flex: 1;
+    padding: 10px;
+    border: 1px solid #ccc;
+    border-radius: 4px 0 0 4px;
+}
 
-    .search-bar button {
-        padding: 10px;
-        background-color: #a80092;
-        color: white;
-        border: #a80092, 2px;
-        border-radius: 0 4px 4px 0;
-        cursor: pointer;
-    }
+.search-bar button {
+    padding: 10px;
+    background-color: #a80092;
+    color: white;
+    border: none;
+    border-radius: 0 4px 4px 0;
+    cursor: pointer;
+}
 
-    .no-products {
-        text-align: center;
-        color: gray;
-    }
+.update-button {
+    padding: 10px;
+    background-color: #a80092;
+    color: white;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    margin-left: 10px;
+}
 
-    .no-products-icon {
-        font-size: 15rem;
-    }
+.loading-indicator {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-direction: column;
+    height: 200px;
+    font-size: 1.2em;
+}
 
-    .product-cards {
-        display: grid;
-        grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
-        gap: 10px;
-        width: 100%;
-        overflow-y: auto;
-    }
+.loading-icon {
+    margin-bottom: 10px;
+    animation: spin 1s linear infinite; 
+}
 
-    .product-card {
-        background-color: #333;
-        padding: 10px;
-        border-radius: 8px;
-        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-        display: flex;
-        flex-direction: column;
-    }
+@keyframes spin {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
+}
 
-    .product-image {
-        height: 150px;
-        display: flex;
-        justify-content: center;
-        align-items: center;
-    }
+.no-products {
+    text-align: center;
+    color: gray;
+}
 
-    .product-image img {
-        max-width: 100%;
-        max-height: 100%;
-        object-fit: contain;
-    }
+.no-products-icon {
+    font-size: 15rem;
+}
 
-    .product-details {
-        padding-left: 10px;
-        padding-right: 10px;
-        padding-top: 0;
-        padding-bottom: 0;
-        margin-top: 0;
-        margin-bottom: 0;
-    }
+.product-cards {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+    gap: 5px;
+    width: 100%;
+    height: 90vh;
+    overflow-y: auto;
+    padding: 8px
+}
 
-    .default-icon {
-        font-size: 100%;
-        color: rgb(255, 255, 255);
-    }
+/* Custom scrollbar styles */
+.product-cards::-webkit-scrollbar {
+    width: 3px; /* Largura da barra de rolagem */
+}
+
+.product-cards::-webkit-scrollbar-thumb {
+    background-color: #a8009233;
+    border-radius: 4px;
+    
+}
+
+.product-cards::-webkit-scrollbar-track {
+    border-radius: 4px;
+}
+
+.product-card {
+    background-color: #333;
+    padding: 10px;
+    border-radius: 16px;
+    box-shadow: 0 2px 4px rgba(255, 255, 255, 0.1);
+    display: flex;
+    flex-direction: column;
+    height: 12.5rem; 
+}
+
+.product-image {
+    height: 100px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.product-image img {
+    max-width: 100%;
+    max-height: 100%;
+    object-fit: contain;
+}
+
+.product-details {
+    line-height: 100%;
+}
+
+.default-icon {
+    font-size: 100%;
+    color: rgb(255, 255, 255);
+}
+
+.pagination {
+    display: flex;
+    justify-content: center;
+    margin-top: 20px;
+    align-items: center;
+}
+
+.report-icon{
+    padding-left: 10px;
+    color: red;
+}
 </style>

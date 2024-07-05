@@ -28,7 +28,7 @@ interface Window {
     setCashier: (cashierId:number) => Promise<boolean>,
   },
   productService: {
-    getProducts: (page: number|null, sku:number|null) => Promise<{
+    getProducts: (page: number|null, sku:number|null, force:boolean) => Promise<{
       id: number,
       description: string,
       sku: string,

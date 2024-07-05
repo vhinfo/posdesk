@@ -1,4 +1,4 @@
-export async function getProducts(page: number|null, sku:number|null): Promise<{
+export async function getProducts(page: number|null, sku:number|null, force: boolean): Promise<{
     id: number,
     description: string,
     sku: string,
@@ -8,5 +8,5 @@ export async function getProducts(page: number|null, sku:number|null): Promise<{
     brand: string,
     price: number
   }[]|undefined> {
-    return window.productService.getProducts(page, sku);
+    return window.productService.getProducts(page, sku, force);
 }
