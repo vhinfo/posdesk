@@ -5,7 +5,7 @@
         <button @click="customer ? openModal() : ''" class="person-set-button" >
             <SvgIcon type="mdi" :path="mdiAccount" class="user-icon" width="35" height="35" />
             <div class="person-info">
-                <span>{{ null === personComputed || !personComputed.name || '' === personComputed.name ? 'não cadastrado' : personComputed.name}}</span>
+                <span>{{ null === personComputed || !personComputed.name || '' === personComputed.name ? 'não informado' : personComputed.name}}</span>
                 <span>{{ null === personComputed || !personComputed.document || '' === personComputed.document ? '' : personComputed.document ?? ''}}</span>
             </div>
         </button>

@@ -1,5 +1,5 @@
 import { Module, MutationTree, GetterTree } from 'vuex';
-import { AuthState, User } from '../../types';
+import { AuthState, User, Payment } from '../../types';
 
 const state: AuthState = {
   user: null,
@@ -11,6 +11,7 @@ const getters: GetterTree<AuthState, unknown> = {
   getStoreName: (state: AuthState): string | null => state.user ? state.user.storeName : null,
   getCashierName: (state: AuthState): string | null => state.user ? state.user.cashierName : null,
   isUserManager: (state: AuthState): boolean => state.user ? state.user.isManager : false,
+  paymentMethods: (state: AuthState): Payment[] | null => state.user && state.user.paymentMethods ? state.user.paymentMethods as Payment[] : null,
 };
 
 const mutations: MutationTree<AuthState> = {
