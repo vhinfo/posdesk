@@ -94,26 +94,26 @@ export const productService =
         return categorysSaved;
     },
 
-    async saveProducts(productsInfo:any):Promise<Product[]>
-    {
-        const productSaved:Product[] = [];
-        for (const product of productsInfo.products){
-            const savedProduct = new Product(db,{
-                id: product.id,
-                description: product.description??'sem descrição',
-                sku: product.sku,
-                categoryId: product.categoryId,
-                categoryName: product.categoryName,
-                image: product.website,
-                brand: product.brand,
-                price: product.price
-            })
-
-            await savedProduct.save();
-            productSaved.push(savedProduct);
+    async saveProducts(productsInfo: any): Promise<void> {
+        let insertSql = 'INSERT INTO products (id, description, sku, categoryId, categoryName, image, brand, price) VALUES ';
+        const values: string[] = [];
+    
+        for (const product of productsInfo.products) {
+            const id = product.id;
+            const description = product.description ? product.description.replace(/'/g, "''") : 'sem descrição';
+            const sku = product.sku.replace(/'/g, "''");
+            const categoryId = product.categoryId ?? "NULL";
+            const categoryName = product.categoryName ? product.categoryName.replace(/'/g, "''") : '';
+            const image = product.website ? product.website.replace(/'/g, "''") : '';
+            const brand = product.brand ? product.brand.replace(/'/g, "''") : '';
+            const price = product.price;
+    
+            values.push(`(${id}, '${description}', '${sku}', ${categoryId}, '${categoryName}', '${image}', '${brand}', ${price})`);
         }
+    
+        insertSql += values.join(', ');
 
-        return productSaved;
+        await Product.all(db,insertSql);
     },
 
     async getProductsByPage(page:number):Promise<Product[]|undefined>

@@ -9,7 +9,12 @@
     <!-- item cart and sale info right column -->
     <div class="cart-column">
       <CartList />
-      <!-- items select component -->
+      <div class="person-info"> 
+        <PersonSet :customer="true" />
+        <!-- TODO SALESMAN SELECT -->
+        <!-- <PersonSet :customer="false" /> -->
+      </div>
+      <!-- <PersonSet /> -->
       <!-- sale resuming component -->
       <!-- 4 buttons: addObservation, change products, clear sale, select payment -->
     </div>
@@ -20,17 +25,28 @@
 import { defineComponent } from 'vue';
 import ProductList from './components/cashier/ProductsList.vue';
 import CartList from './components/cashier/CartList.vue';
+import PersonSet from './components/cashier/PersonSet.vue';
 
 export default defineComponent({
   name: 'CashierPage',
   components: {
     ProductList,
-    CartList
+    CartList,
+    PersonSet
   },
 });
 </script>
 
 <style scoped>
+.person-info {
+  padding-top: 20px;
+  display: flex;
+  justify-content: start;
+  align-items: center;
+  width: 100%;
+}
+
+
 .cashier-page {
   display: flex;
   width: 100%;

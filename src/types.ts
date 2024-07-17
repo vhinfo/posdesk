@@ -1,16 +1,7 @@
 // src/types.ts
 
-export interface Customer {
-    document: string;
-    name: string;
-    email: string;
-    phone: string;
-    type: string;
-    store_partiner_id: string;
-    store_partiner_name: string;
-  }
-  
-  export interface Salesman {
+export interface Person {
+    id: number|null, 
     document: string;
     name: string;
     email: string;
@@ -53,7 +44,7 @@ export interface Customer {
     change_value: number;
     qtd_items: number;
     qtd_payments: number;
-    forceCustomer: boolean | string;
+    forceCustomer: boolean|string;
     payment_method: string;
     valid_sale: boolean;
     number: string;
@@ -69,15 +60,15 @@ export interface Customer {
     discount_value: number;
     total_value: number;
     invoice: boolean;
-    invoice_serie: string;
-    invoice_number: string;
-    invoice_coupon: string;
-    invoice_xml: string;
-    customer: Customer;
-    salesman: Salesman;
+    invoice_serie: string|null;
+    invoice_number: string|null;
+    invoice_coupon: string|null;
+    invoice_xml: string|null;
+    customer: Person|null;
+    salesman: Person|null;
     payments: Payment[];
     items: Item[];
-    discounts: Discount[];
+    discounts: Discount[]|null;
   }
   
   export interface Product {

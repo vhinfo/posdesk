@@ -22,7 +22,6 @@ export async function addProductToCart(product: Product): Promise<boolean>
     return false;
 }
 
-
 export async function quantityProductHandler(product: Product|null, value: number, item:Item|null = null): Promise<boolean> 
 {
     if(item === null && product !== null){
@@ -50,3 +49,4 @@ export async function clearSaleCart():Promise<boolean>
     store.commit('sale/clearItems');
     return true;
 }
+
