@@ -3,7 +3,7 @@ import { Store } from './Store';
 import { Cashier } from './Cashier';
 import { User } from './User';
 import { Customer } from './Customer';
-import { Salesman } from './Salesman';
+import { Salesman } from './Person';
 import { Payment } from './Payment';
 import { Product } from './Product';
 import { Discount } from './Discount';

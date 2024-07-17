@@ -5,7 +5,7 @@
         <SvgIcon type="mdi" :path="mdiCart" class="default-icon" width="20" height="20"/>
         <h3> Carrinho </h3>
       </div>
-      <SvgIcon type="mdi" :path="mdiDelete" class="default-icon-red" width="20" height="20" @click="clearCart"/>
+      <SvgIcon type="mdi" :path="mdiDelete" class="default-icon-red" width="25" height="25" @click="clearCart"/>
     </div>
     <div v-if="products.length === 0" class="no-cart">
       <SvgIcon type="mdi" :path="mdiCartOff" class="no-products-icon" width="150" height="150" />
@@ -15,20 +15,20 @@
       <table class="cart-list">
         <tbody>
           <tr v-for="product in products" :key="product.id" class="cart-item">
-            <td>
-              <SvgIcon type="mdi" :path="mdiCartMinus" class="default-icon-red" width="20" height="20" @click="removeProduct(product)" />
+            <td class="action-column">
+              <SvgIcon type="mdi" :path="mdiCartMinus" class="default-icon-red" width="25" height="25" @click="removeProduct(product)" />
             </td>
-            <td>
+            <td class="description-column">
               <b><span>{{ product.sku }}</span><br></b>
               <span>{{ product.description }}</span>
             </td>
-            <td>
+            <td class="quantity-column">
               <div class="quantity-control">
                 <SvgIcon type="mdi" :path="mdiMinusCircle" class="default-icon" width="20" height="20" @click="decreaseQuantity(product)" />
-                <span>{{ product.quantity }}</span>
+                <span class='quantity-number'>{{ product.quantity }}</span>
                 <SvgIcon type="mdi" :path="mdiPlusCircle" class="default-icon" width="20" height="20" @click="increaseQuantity(product)" />
               </div>
-            </td>
+            </td class="value-column">
             <td>
               <b>{{ formatPrice(product.price) }}</b>
             </td>
@@ -123,7 +123,7 @@ export default defineComponent({
   color: gray;
   background-color: #333;
   border-radius: 16px;
-  height: 40vh;
+  height: 30vh;
   display: flex;
   flex-direction: column;
   justify-content: center;
@@ -138,7 +138,7 @@ export default defineComponent({
   width: 100%;
   background-color: #333;
   border-radius: 16px;
-  height: 40vh;
+  height: 30vh;
   overflow-y: auto;
 }
 
@@ -151,15 +151,16 @@ export default defineComponent({
 .cart-table td {
   padding: 10px;
   text-align: left;
+  align-self: center;
 }
 
 .cart-item {
   display: flex;
   justify-content: space-between;
-  align-items: flex-start; /* Ajuste para alinhar o conteúdo ao topo */
+  align-items: flex-start; 
   padding: 10px;
   border-bottom: 1px solid #00000098;
-  word-break: break-word; /* Quebra de palavra para textos longos */
+  word-break: break-word;
 }
 
 .quantity-control {
@@ -174,12 +175,11 @@ export default defineComponent({
 
 .default-icon-red {
   cursor: pointer;
-  color: rgb(129, 9, 9);
+  color: rgb(192, 4, 4);
 }
 
-/* Custom scrollbar styles */
 .cart-table::-webkit-scrollbar {
-  width: 3px; /* Largura da barra de rolagem */
+  width: 3px;
 }
 
 .cart-table::-webkit-scrollbar-thumb {
@@ -205,4 +205,27 @@ export default defineComponent({
 .title h3 {
   margin-left: 10px;
 }
+
+.quantity-number{
+  padding-inline: 10px;
+}
+
+.action-column{
+  width: 5%;
+  text-align: center !important
+}
+
+.description-column{
+  width: 50%;
+}
+
+.quantity-column{
+  width: 10%;
+  text-align: center !important
+}
+
+.value-column{
+  width: 20%;
+}
+
 </style>

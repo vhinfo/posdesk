@@ -7,7 +7,7 @@ import log from 'electron-log';
 import { authService } from '../services/authService';
 import { DatabaseService } from '../services/databaseService'; 
 import { productService } from '../services/productService'; 
-
+import { personService } from '../services/personService';
 
 log.initialize();
 const appDirectory = path.dirname(app.getPath('exe'));
@@ -42,6 +42,7 @@ const preload = path.join(__dirname, '../preload/index.mjs')
 const indexHtml = path.join(RENDERER_DIST, 'index.html')
 const { autoUpdater } = require('electron-updater');
 const iconPatch = path.join(process.env.VITE_PUBLIC, 'win-icon.png');
+
 async function createWindow() {
   win = new BrowserWindow({
     title: 'PosDesk',
@@ -101,12 +102,10 @@ autoUpdater.on('update-available', () => {
   log.info('Atualização disponível');
 });
 
-
 autoUpdater.on('update-downloaded', () => {
   log.info('Atualização baixada, aplicando...');
   autoUpdater.quitAndInstall();
 });
-
 
 app.on('window-all-closed', () => {
   win = null
@@ -166,7 +165,6 @@ ipcMain.handle('make-logout', async (event) => {
 ipcMain.handle('get-store-cashiers', async (event, ) => {
   return await authService.getStoreCashiers();
 });
-
 ipcMain.handle('auth-validate', async (event, args) => {
   return await authService.validateAuthentication(args);
 });
@@ -178,6 +176,15 @@ ipcMain.handle('set-cashier', async (event, cashierId: number ) => {
 ipcMain.handle('get-products', async (event, page:number|null, sku:number|null, force:boolean) => {
   return await productService.getProduct(page, sku, force);
 });
+
+// PERSON
+ipcMain.handle('get-person', async (event, document) => {
+  return await personService.getPerson(document);
+});
+ipcMain.handle('create-customer', async (event, customer) => {
+  return await personService.createCustomer(customer);
+});
+
 
 
 

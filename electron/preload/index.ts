@@ -1,4 +1,5 @@
 import { ipcRenderer, contextBridge } from 'electron';
+import { Person } from '../models/Person';
 // import { authService } from '../services/authService';
 
 // --------- Expose some API to the Renderer process ---------
@@ -137,4 +138,13 @@ contextBridge.exposeInMainWorld('productService', {
   },
 });
 
+// PERSON
+contextBridge.exposeInMainWorld('personService', {
+  getPerson: (document:number) => {
+    return ipcRenderer.invoke('get-person',document);
+  },
+  createCustomer: (customer:Person) => {
+    return ipcRenderer.invoke('create-customer',customer);
+  },
+});
 
