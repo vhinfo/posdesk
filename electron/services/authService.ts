@@ -11,7 +11,7 @@ import { Cupom } from '../models/Cupom.js';
 const db = DatabaseService.getDBInstance();
 
 export const authService = {
-  async validateAuthentication(args: any): Promise<{ name:string, storeName:string, cashierName: string, isManager:boolean }>
+  async validateAuthentication(args: any): Promise<{ name:string, storeName:string, cashierName: string, isManager:boolean, paymentMethods:PaymentMethod[]}>
   {
     const user = await User.findFirst(db);
     if(!user) {
@@ -24,11 +24,18 @@ export const authService = {
       throw Error(' usuario sem caixa definido ')
     }
 
+    const payments = await PaymentMethod.findAll(db);
+    if(!payments){
+      throw new Error('não foi encontrado methodos de pagamentos disponíveis')
+    }
+
+    
     return { 
-      name:user.name, 
-      storeName:user.storeName, 
-      cashierName: user.cashierName, 
-      isManager:user.isManager 
+      name:user.name,
+      storeName:user.storeName,
+      cashierName: user.cashierName,
+      isManager:user.isManager,
+      paymentMethods: payments
     };
   },
 

@@ -149,7 +149,7 @@ export default defineComponent({
 
 .cart-table th,
 .cart-table td {
-  padding: 10px;
+  /* padding: 10px;  */
   text-align: left;
   align-self: center;
 }
@@ -216,11 +216,11 @@ export default defineComponent({
 }
 
 .description-column{
-  width: 50%;
+  width: 45%;
 }
 
 .quantity-column{
-  width: 10%;
+  width: 15%;
   text-align: center !important
 }
 

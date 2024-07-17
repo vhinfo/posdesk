@@ -73,7 +73,7 @@
 <style scoped>
   .topmenubar {
     width: 100%;
-    height: 60px;
+    height: 5vh;
     display: flex;
     align-items: center;
     padding: 0 1rem;

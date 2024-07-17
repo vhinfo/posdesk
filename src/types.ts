@@ -11,11 +11,21 @@ export interface Person {
     store_partiner_name: string;
   }
   
+  export interface PaymentMethod {
+    id: number;
+    description: string;
+    alias: string;
+    issue: boolean;
+    icon: string | null;
+  }  
   export interface Payment {
-    value: number;
-    payment_method_id: number;
-    payment_date: string;
-  }
+    id: number;
+    description: string;
+    alias: string;
+    issue: boolean;
+    icon: string | null;
+    value:number
+  }  
   
   export interface Discount {
     id: string;
@@ -86,11 +96,13 @@ export interface Person {
     storeName: string;
     cashierName: string;
     isManager: boolean;
+    paymentMethods: PaymentMethod[] | boolean;
   }
   
   export interface AuthState {
     user: User | null;
   }
+  
   
   export interface Alert {
     message: string;
