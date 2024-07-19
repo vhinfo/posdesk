@@ -1,4 +1,8 @@
 <template>
+  <div class="title">
+    <SvgIcon type="mdi" :path="mdiEqual" class="default-icon" width="20" height="20"/>
+    <h3> Totais </h3>
+  </div>
   <div class="sale-summary">
     <div class="summary-item">
       <SvgIcon type="mdi" :path="mdiCashMultiple" class="icon" />
@@ -32,7 +36,7 @@
 import { defineComponent, computed } from 'vue';
 import { useStore } from 'vuex';
 import SvgIcon from '@jamescoyle/vue-icon';
-import { mdiCashMultiple, mdiCreditCard, mdiTag, mdiCalculator, mdiWallet, mdiAlertCircle } from '@mdi/js';
+import { mdiCashMultiple, mdiCreditCard, mdiTag, mdiCalculator, mdiWallet, mdiAlertCircle, mdiEqual } from '@mdi/js';
 
 export default defineComponent({
   name: 'SaleSummary',
@@ -68,7 +72,8 @@ export default defineComponent({
       mdiTag,
       mdiCalculator,
       mdiWallet,
-      mdiAlertCircle
+      mdiAlertCircle,
+      mdiEqual
     };
   },
 });
@@ -114,4 +119,19 @@ export default defineComponent({
 .falta {
   color: red;
 }
+
+.title {
+  display: flex;
+  align-items: center;
+}
+
+.title h3 {
+  margin-left: 10px;
+}
+
+.default-icon {
+  cursor: pointer;
+  color: rgb(255, 255, 255);
+}
+
 </style>

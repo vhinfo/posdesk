@@ -63,8 +63,8 @@ export interface Person {
     cashier: string;
     employee_cashier: string;
     employee_sale: boolean;
-    obs: string;
-    sys_obs: string;
+    obs: string|null;
+    sys_obs: string|null;
     products_value: number;
     payments_value: number;
     discount_value: number;
@@ -78,7 +78,7 @@ export interface Person {
     salesman: Person|null;
     payments: Payment[];
     items: Item[];
-    discounts: Discount[]|null;
+    discounts: Discount[];
   }
   
   export interface Product {

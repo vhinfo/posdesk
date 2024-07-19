@@ -1,5 +1,5 @@
 import { Module, MutationTree, ActionTree, GetterTree } from 'vuex';
-import { Item, Person, Sale } from '../../types';
+import { Discount, Item, Person, Sale } from '../../types';
 
 const state: Sale = 
 {
@@ -70,7 +70,14 @@ const getters: GetterTree<Sale, any> =
   },
   getTotalSaleValue(state): number {
     return state.total_value;
+  },
+  getSale(state): Sale {
+    return state
+  },
+  getDiscounts(state): Discount[] {
+    return state.discounts;
   }
+
 };
 
 const mutations: MutationTree<Sale> = 

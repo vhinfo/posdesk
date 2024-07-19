@@ -8,6 +8,7 @@ import { authService } from '../services/authService';
 import { DatabaseService } from '../services/databaseService'; 
 import { productService } from '../services/productService'; 
 import { personService } from '../services/personService';
+import { discountService } from '../services/discountService';
 
 log.initialize();
 const appDirectory = path.dirname(app.getPath('exe'));
@@ -178,13 +179,16 @@ ipcMain.handle('get-products', async (event, page:number|null, sku:number|null, 
 });
 
 // PERSON
-ipcMain.handle('get-person', async (event, document) => {
+ipcMain.handle('get-person', async (event, document:string) => {
   return await personService.getPerson(document);
 });
 ipcMain.handle('create-customer', async (event, customer) => {
   return await personService.createCustomer(customer);
 });
 
-
+// DISCONTS
+ipcMain.handle('get-discont', async (event, code:string) => {
+  return await discountService.getDiscount(code)
+})
 
 

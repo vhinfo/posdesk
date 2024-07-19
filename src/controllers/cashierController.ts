@@ -1,5 +1,5 @@
 import store from '../store';
-import { Item, Product } from '../types';
+import { Discount, Item, Product, Sale } from '../types';
 
 export async function addProductToCart(product: Product): Promise<boolean> 
 {
@@ -33,6 +33,7 @@ export async function quantityProductHandler(product: Product|null, value: numbe
             ...item,
             quantity: updatedQuantity,
         };
+        updatedItem.total = updatedItem.quantity * updatedItem.value;
         if(updatedItem.quantity <= 0){
             store.commit('sale/removeItem', updatedItem.id);
         }else{
@@ -50,3 +51,48 @@ export async function clearSaleCart():Promise<boolean>
     return true;
 }
 
+export async function addDiscount(discont:Discount):Promise<void>
+{
+    
+}
+
+
+// TOTALS 
+export async function reprocessSale():Promise<void>
+{
+    const sale:Sale = await processSaleDisconts( store.getters['sale/getSale']); 
+    await processProducts()
+    
+}
+
+async function processProducts():Promise<void>
+{
+    console.log('trying processing product');
+}
+
+async function processSaleDisconts(sale:Sale):Promise<Sale>
+{
+    if(null === sale.discounts){
+        return sale;
+    }
+
+    sale.discounts.forEach((saleDisconts) => {
+        
+    });
+    
+    return sale;
+}
+
+/*
+    export interface Discount {
+        id: string;
+        with_client: string;
+        code: string;
+        description: string;
+        value: number;
+        all_products: boolean;
+        accumulate: boolean;
+        percent: boolean;
+        quantity: number;
+    }
+*/

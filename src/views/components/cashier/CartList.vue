@@ -23,6 +23,7 @@
               <span>{{ product.description }}</span>
             </td>
             <td class="quantity-column">
+              <b>{{ formatPrice(product.price) }}</b>
               <div class="quantity-control">
                 <SvgIcon type="mdi" :path="mdiMinusCircle" class="default-icon" width="20" height="20" @click="decreaseQuantity(product)" />
                 <span class='quantity-number'>{{ product.quantity }}</span>
@@ -30,7 +31,7 @@
               </div>
             </td class="value-column">
             <td>
-              <b>{{ formatPrice(product.price) }}</b>
+              <b>{{ formatPrice(product.total) }}</b>
             </td>
           </tr>
         </tbody>
@@ -113,119 +114,118 @@ export default defineComponent({
 </script>
 
 <style scoped>
-.cart-list {
-  width: 100%;
-  border-radius: 16px;
-}
+  .cart-list {
+    width: 100%;
+    border-radius: 16px;
+  }
 
-.no-cart {
-  text-align: center;
-  color: gray;
-  background-color: #333;
-  border-radius: 16px;
-  height: 30vh;
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-  align-items: center;
-}
+  .no-cart {
+    text-align: center;
+    color: gray;
+    background-color: #333;
+    border-radius: 16px;
+    height: 30vh;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+  }
 
-.no-products-icon {
-  font-size: 5rem;
-}
+  .no-products-icon {
+    font-size: 5rem;
+  }
 
-.cart-table {
-  width: 100%;
-  background-color: #333;
-  border-radius: 16px;
-  height: 30vh;
-  overflow-y: auto;
-}
+  .cart-table {
+    width: 100%;
+    background-color: #333;
+    border-radius: 16px;
+    height: 30vh;
+    overflow-y: auto;
+  }
 
-.cart-table table {
-  width: 100%;
-  border-collapse: collapse;
-}
+  .cart-table table {
+    width: 100%;
+    border-collapse: collapse;
+  }
 
-.cart-table th,
-.cart-table td {
-  /* padding: 10px;  */
-  text-align: left;
-  align-self: center;
-}
+  .cart-table th,
+  .cart-table td {
+    text-align: left;
+    align-self: center;
+  }
 
-.cart-item {
-  display: flex;
-  justify-content: space-between;
-  align-items: flex-start; 
-  padding: 10px;
-  border-bottom: 1px solid #00000098;
-  word-break: break-word;
-}
+  .cart-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start; 
+    padding: 10px;
+    border-bottom: 1px solid #00000098;
+    word-break: break-word;
+  }
 
-.quantity-control {
-  display: flex;
-  align-items: center;
-}
+  .quantity-control {
+    display: flex;
+    align-items: center;
+  }
 
-.default-icon {
-  cursor: pointer;
-  color: rgb(255, 255, 255);
-}
+  .default-icon {
+    cursor: pointer;
+    color: rgb(255, 255, 255);
+  }
 
-.default-icon-red {
-  cursor: pointer;
-  color: rgb(192, 4, 4);
-}
+  .default-icon-red {
+    cursor: pointer;
+    color: rgb(192, 4, 4);
+  }
 
-.cart-table::-webkit-scrollbar {
-  width: 3px;
-}
+  .cart-table::-webkit-scrollbar {
+    width: 3px;
+  }
 
-.cart-table::-webkit-scrollbar-thumb {
-  background-color: #a8009233;
-  border-radius: 16px;
-}
+  .cart-table::-webkit-scrollbar-thumb {
+    background-color: #a8009233;
+    border-radius: 16px;
+  }
 
-.cart-table::-webkit-scrollbar-track {
-  border-radius: 16px;
-}
+  .cart-table::-webkit-scrollbar-track {
+    border-radius: 16px;
+  }
 
-.cart-header {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-}
+  .cart-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
 
-.title {
-  display: flex;
-  align-items: center;
-}
+  .title {
+    display: flex;
+    align-items: center;
+  }
 
-.title h3 {
-  margin-left: 10px;
-}
+  .title h3 {
+    margin-left: 10px;
+  }
 
-.quantity-number{
-  padding-inline: 10px;
-}
+  .quantity-number{
+    padding-inline: 10px;
+  }
 
-.action-column{
-  width: 5%;
-  text-align: center !important
-}
+  .action-column{
+    width: 5%;
+    text-align: center !important
+  }
 
-.description-column{
-  width: 45%;
-}
+  .description-column{
+    width: 45%;
+  }
 
-.quantity-column{
-  width: 15%;
-  text-align: center !important
-}
+  .quantity-column{
+    width: 15%;
+    text-align: center !important
+  }
 
-.value-column{
-  width: 20%;
-}
+  .value-column{
+    width: 20%;
+  }
 
 </style>
