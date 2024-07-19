@@ -1,13 +1,13 @@
 import { Cupom } from '../models/Cupom.js';
 import { User } from '../models/User.js';
-import { DatabaseService } from '../services/databaseService.js';
-import { getDiscount } from './api/discountApi.js';
+import { DatabaseService } from './databaseService.js';
+import { getDiscount } from './api/cupomApi.js';
 
 const db = DatabaseService.getDBInstance();
 
-export const discountService =
-{
-    async getDiscount(code: string): Promise<Cupom> {
+export const cupomService = {
+    async getCupom(code: string): Promise<Cupom> {
+        console.log('inside cupom service');
         let discounts = await Cupom.findBy(db, [['code', '=', code]]);
         if (discounts.length > 0) {
             return discounts[0];
@@ -19,12 +19,16 @@ export const discountService =
         }
     
         let result = await getDiscount(user.accessToken, code);
-    
-        return new Cupom(db, {
+        
+        console.log(result);
+        if(undefined === result){
+            return undefined;
+        }
+        const newCupom =  new Cupom(db, {
             id: result.id,
             label: result.label,
             code: result.code,
-            value: result.calue,
+            value: result.value,
             active: result.active,
             defaultCupom: result.default,
             description: result.description,
@@ -33,18 +37,21 @@ export const discountService =
             accumulate: result.accumulate,
             quantity: result.quantity,
             withValidate: result.with_validity,
-            startDate: Date,
-            endDate: Date,
-            customerId: number
+            startDate: result.start_date,
+            endDate: result.end_date,
+            customerId: result.customer_id
         });
+
+        newCupom.save();
+        return newCupom;
     },
     
-    async saveDiscount(discount:Discount):Promise<void>
+    async saveDiscount(cupom:Cupom):Promise<void>
     {
         console.log('TODO SAVE DISCOUNT');
     },
     
-    async saveProductDiscount(discount:Discount):Promise<void>
+    async saveProductDiscount(cupom:Cupom):Promise<void>
     {
         console.log('TODO SAVE PRODUCT DISCOUNT');
     }

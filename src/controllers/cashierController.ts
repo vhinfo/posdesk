@@ -1,5 +1,5 @@
 import store from '../store';
-import { Discount, Item, Product, Sale } from '../types';
+import { Cupom, Item, Product, Sale } from '../types';
 
 export async function addProductToCart(product: Product): Promise<boolean> 
 {
@@ -51,9 +51,28 @@ export async function clearSaleCart():Promise<boolean>
     return true;
 }
 
-export async function addDiscount(discont:Discount):Promise<void>
+export async function addDiscontToCurrentSale(cupom: Cupom): Promise<void> {
+    const currentDiscounts: Cupom[] = store.getters['sale/getDisconts'];
+
+    if (cupom.acumulate) {
+        if (currentDiscounts.length > 0) {
+            throw new Error('Não é possível adicionar um cupom acumulativo quando já existe outro desconto.');
+        }
+    }
+
+    store.commit('sale/addDiscont', cupom);
+}
+
+export async function clearDiscont():Promise<void>
 {
-    
+    console.log('tring remove disconts');
+    store.commit('sale/clearDiscont');
+}
+
+
+export async function getCupom(code: string):Promise<Cupom>
+{   
+    return await window.cupomService.getCupom(code);
 }
 
 
@@ -82,17 +101,3 @@ async function processSaleDisconts(sale:Sale):Promise<Sale>
     
     return sale;
 }
-
-/*
-    export interface Discount {
-        id: string;
-        with_client: string;
-        code: string;
-        description: string;
-        value: number;
-        all_products: boolean;
-        accumulate: boolean;
-        percent: boolean;
-        quantity: number;
-    }
-*/

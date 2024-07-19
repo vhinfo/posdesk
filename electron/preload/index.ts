@@ -148,3 +148,9 @@ contextBridge.exposeInMainWorld('personService', {
   },
 });
 
+// DISCONTS
+contextBridge.exposeInMainWorld('cupomService', {
+  getCupom: (code:string) => {
+    return ipcRenderer.invoke('get-cupom',code);
+  },
+});

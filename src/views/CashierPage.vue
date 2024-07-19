@@ -15,7 +15,7 @@
       </div>
       <CartList />
       <DiscontsSale />
-      <SaleTotals class='sale-info' />
+      <SaleTotals />
       <div class='sale-actions'>
         <SaleComment />
         <ClearSale />

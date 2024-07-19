@@ -27,17 +27,23 @@ export interface Person {
     value:number
   }  
   
-  export interface Discount {
-    id: string;
-    with_client: string;
+  export interface Cupom {
+    label: string;
     code: string;
-    description: string;
     value: number;
-    all_products: boolean;
-    accumulate: boolean;
+    active: boolean;
+    default: boolean;
+    description: string;
+    allproducts: boolean;
     percent: boolean;
-    quantity: number;
+    acumulate: boolean;
+    quantity: number | null;
+    with_validity: boolean;
+    start_date: string | null;
+    end_date: string | null;
+    customer_id: number | null;
   }
+  
   
   export interface Item {
     id: number;
@@ -47,7 +53,7 @@ export interface Person {
     sku: string;
     total: number;
     value: number;
-    discounts: Discount[];
+    discounts: Cupom[];
   }
   
   export interface Sale {
@@ -78,7 +84,7 @@ export interface Person {
     salesman: Person|null;
     payments: Payment[];
     items: Item[];
-    discounts: Discount[];
+    discounts: Cupom[];
   }
   
   export interface Product {

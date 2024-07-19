@@ -9,7 +9,6 @@ import { Payment } from '../models/Payment';
 import { Product } from '../models/Product';
 import { Category } from '../models/Category';
 import { Cupom } from '../models/Cupom';
-import { Discount } from '../models/Discount';
 import { PaymentMethod } from '../models/PaymentMethod';
 import { Sale } from '../models/Sale';
 import { Person } from '../models/Person';
@@ -35,7 +34,6 @@ export class DatabaseService {
                 db.run(Product.createSQLCreateTable(Product.tableName, Product.fields));
                 db.run(Category.createSQLCreateTable(Category.tableName, Category.fields));
                 db.run(Cupom.createSQLCreateTable(Cupom.tableName, Cupom.fields));
-                db.run(Discount.createSQLCreateTable(Discount.tableName, Discount.fields));
                 db.run(PaymentMethod.createSQLCreateTable(PaymentMethod.tableName, PaymentMethod.fields));
                 db.run(Sale.createSQLCreateTable(Sale.tableName, Sale.fields));
                 db.run(Person.createSQLCreateTable(Person.tableName, Person.fields), () => {

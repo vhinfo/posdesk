@@ -1,21 +1,18 @@
 
 export async function getDiscount(token:string, code:string): Promise<any> {
+  console.log('token: ',token);
     const headers: HeadersInit = {
-      "Authorization": token || '',
+      "Authorization": `Bearer ${token}`,
       "Content-Type": "application/json"
     };
 
-    const raw = {
-        code:code
-    }
     const requestOptions: RequestInit = {
-      method: 'GET',
+      method: 'get',
       headers,
       redirect: 'follow',
-      body: JSON.stringify(raw)
     };
 
-    const url = `http://${process.env.ERP_URL}:${process.env.ERP_PORT}/cupom`;
+    const url = `http://${process.env.ERP_URL}:${process.env.ERP_PORT}/cupom?code=${code}`;
     const response = await fetch(url, requestOptions);
 
     if (!response.ok) {
@@ -23,5 +20,5 @@ export async function getDiscount(token:string, code:string): Promise<any> {
     }
 
     const result = await response.json();
-    return result.data as string;
+    return result.data;
 }
