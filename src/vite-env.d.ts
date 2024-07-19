@@ -1,5 +1,6 @@
 /// <reference types="vite/client" />
 
+
 declare module '*.vue' {
   import type { DefineComponent } from 'vue';
   const component: DefineComponent<{}, {}, any>;
@@ -12,7 +13,6 @@ declare module '@jamescoyle/vue-icon' {
   export default component;
 }
 
-// Definir interface de janela global para exposições específicas do Electron
 interface Window {
   ipcRenderer: import('electron').IpcRenderer;
   authService: {
@@ -29,8 +29,11 @@ interface Window {
     getPerson: (document: string) => Promise<Person>;
     createCustomer: (customer: Person) => Promise<number>;
   };
+  cupomService: {
+    getCupom: (code: string) => Promise<any>;
+  };
 }
 
 declare global {
-  import { Product, Person } from './types';
+  import { Product, Person, Cupom } from './types';
 }

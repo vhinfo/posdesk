@@ -10,6 +10,7 @@ export class Product extends BaseEntity {
     image: string;
     brand: string;
     price: number;
+    cupoms: string|null;
 
     static readonly tableName: string = 'products';
     static readonly fields = [
@@ -19,7 +20,8 @@ export class Product extends BaseEntity {
         { name: 'categoryName', type: 'TEXT' },
         { name: 'image', type: 'TEXT' },
         { name: 'brand', type: 'TEXT' },
-        { name: 'price', type: 'REAL' }
+        { name: 'price', type: 'REAL' },
+        { name: 'cupoms', type: 'TEXT' } // Armazenar o array como string no banco de dados
     ];
 
     constructor(db: sqlite3.Database, entityData: {
@@ -30,7 +32,8 @@ export class Product extends BaseEntity {
         categoryName: string,
         image: string,
         brand: string,
-        price: number
+        price: number,
+        cupoms: string|null
     }) {
         super(db);
         Object.assign(this, entityData);
@@ -44,7 +47,9 @@ export class Product extends BaseEntity {
         const offset = (page - 1) * pageSize;
         const sql = `SELECT * FROM ${this.tableName} LIMIT ${pageSize} OFFSET ${offset}`;
         const rows = await BaseEntity.all(db, sql);
-        return rows.map(row => new this(db, row));
+        return rows.map(row => {
+            row.cupoms = row.cupoms ? JSON.parse(row.cupoms) : null;
+            return new this(db, row);
+        });
     }
-
 }

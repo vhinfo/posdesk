@@ -14,7 +14,8 @@
         <!-- <PersonSet :customer="false" /> -->
       </div>
       <CartList />
-      <SaleTotals class='sale-info' />
+      <DiscontsSale />
+      <SaleTotals />
       <div class='sale-actions'>
         <SaleComment />
         <ClearSale />
@@ -35,6 +36,7 @@
   import SaleComment from './components/cashier/SaleComment.vue';
   import ClearSale from './components/cashier/ClearSale.vue';
   import FinishSale from './components/cashier/FinishSale.vue';
+  import DiscontsSale from './components/cashier/DiscontsSale.vue';
   import SvgIcon from '@jamescoyle/vue-icon';
   import { mdiClose } from '@mdi/js';
 
@@ -48,7 +50,8 @@
       SaleComment,
       SvgIcon,
       ClearSale,
-      FinishSale
+      FinishSale,
+      DiscontsSale
     },
     setup() {
       return {

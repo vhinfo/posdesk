@@ -6,18 +6,13 @@ export async function getPerson(token:string, document:string): Promise<any> {
     "Content-Type": "application/json"
   };
 
-  let raw:string = JSON.stringify({
-    "document": document
-  });
-
   const requestOptions: RequestInit = {
-    method: 'PUT',
+    method: 'GET',
     headers,
-    body:raw,
     redirect: 'follow'
   };
 
-  const url = `http://${process.env.ERP_URL}:${process.env.ERP_PORT}/customer`;
+  const url = `http://${process.env.ERP_URL}:${process.env.ERP_PORT}/customer?document=${document}`;
   const response = await fetch(url, requestOptions);
   if (!response.ok) {
     throw new Error(`${response.status} - ${response.statusText}`);

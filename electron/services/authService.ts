@@ -18,10 +18,10 @@ export const authService = {
       throw Error('sem usuário salvo em cache')
     }
     if(!this.isTokenExpired(user.accessToken)){
-      throw Error(' conexão expirada, connecte-se novamente ')
+      throw Error('conexão expirada, connecte-se novamente ')
     }
     if(user.cashierId === null || user.cashierName === null){
-      throw Error(' usuario sem caixa definido ')
+      throw Error('usuario sem caixa definido ')
     }
 
     const payments = await PaymentMethod.findAll(db);
