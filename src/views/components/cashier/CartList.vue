@@ -19,7 +19,10 @@
               <SvgIcon type="mdi" :path="mdiCartMinus" class="default-icon-red" width="25" height="25" @click="removeProduct(product)" />
             </td>
             <td class="description-column">
-              <b><span>{{ product.sku }}</span><br></b>
+              <b><span>{{ product.sku }}</span></b>
+              <span v-if="product.discounts.length > 0" class="discount-badge"> 
+                desconto
+              </span><br>
               <span>{{ product.description }}</span>
             </td>
             <td class="quantity-column">
@@ -177,6 +180,19 @@ export default defineComponent({
     cursor: pointer;
     color: rgb(192, 4, 4);
   }
+
+  .discount-badge {
+    background-color: #FFA500; /* Cor laranja */
+    color: white; /* Texto em branco */
+    padding: 2px 8px; /* Espaçamento interno */
+    border-radius: 12px; /* Bordas arredondadas */
+    font-size: 12px; /* Tamanho da fonte */
+    font-weight: bold; /* Negrito */
+    display: inline-block; /* Display inline-block */
+    text-align: center; /* Centralizar o texto */
+    margin-top: 4px; /* Margem superior para espaçamento */
+  }
+
 
   .cart-table::-webkit-scrollbar {
     width: 3px;

@@ -18,6 +18,7 @@ export async function addProductToCart(product: Product): Promise<boolean>
             total: product.price,
         };
         store.commit('sale/addItem', newItem);
+        await processProducts();
     }
     return false;
 }
@@ -33,12 +34,12 @@ export async function quantityProductHandler(product: Product|null, value: numbe
             ...item,
             quantity: updatedQuantity,
         };
-        updatedItem.total = updatedItem.quantity * updatedItem.value;
         if(updatedItem.quantity <= 0){
             store.commit('sale/removeItem', updatedItem.id);
         }else{
             store.commit('sale/updateItem', updatedItem);
         }
+        await processProducts();
     } else {
         throw new Error('Product not found in cart.');
     }
@@ -51,53 +52,120 @@ export async function clearSaleCart():Promise<boolean>
     return true;
 }
 
-export async function addDiscontToCurrentSale(cupom: Cupom): Promise<void> {
+export async function addDiscontToCurrentSale(cupom: Cupom, selectedProducts: number[]): Promise<void | null> {
     const currentDiscounts: Cupom[] = store.getters['sale/getDisconts'];
 
-    if (cupom.acumulate) {
-        if (currentDiscounts.length > 0) {
-            throw new Error('Não é possível adicionar um cupom acumulativo quando já existe outro desconto.');
-        }
+    if (cupom.acumulate && currentDiscounts.length > 0) {
+        throw new Error('Não é possível adicionar um cupom acumulativo quando já existe outro desconto.');
     }
 
+    if (selectedProducts.length > 0) {
+        selectedProducts.forEach((selected) => {
+            const item: Item | undefined = store.getters['sale/getProductBySkuOrId'](selected);
+            if (undefined !== item) {
+                const hasSameCodeDiscount = item.discounts.some(discount => discount.code === cupom.code);
+                
+                if (hasSameCodeDiscount) {
+                    throw new Error('o produto já possui este desconto');
+                }
+
+                item.discounts.push(cupom);
+                store.commit('sale/updateItem', item);
+            }
+        });
+        await processProducts();
+        return null;
+    }
+    
     store.commit('sale/addDiscont', cupom);
+    await processProducts();
+    await processSaleDisconts();
+    return null;
 }
+
 
 export async function clearDiscont():Promise<void>
 {
-    console.log('tring remove disconts');
+    const items: Item[] | undefined = store.getters['sale/getItems'];
+    if (undefined === items) {
+        return ;
+    }
+
+    items.forEach((item) => {
+        if(item.discounts.length > 0){
+            item.discounts = [];
+            item.total = item.quantity * item.value
+            store.commit('sale/updateItem', item);
+        }
+    });
+
     store.commit('sale/clearDiscont');
 }
-
 
 export async function getCupom(code: string):Promise<Cupom>
 {   
     return await window.cupomService.getCupom(code);
 }
 
-
-// TOTALS 
-export async function reprocessSale():Promise<void>
-{
-    const sale:Sale = await processSaleDisconts( store.getters['sale/getSale']); 
-    await processProducts()
-    
-}
-
-async function processProducts():Promise<void>
-{
-    console.log('trying processing product');
-}
-
-async function processSaleDisconts(sale:Sale):Promise<Sale>
-{
-    if(null === sale.discounts){
-        return sale;
+// This function gets discounts from each product discount array and calculates each product's total and total sale product.
+async function processProducts(): Promise<void> {
+    const items: Item[] | undefined = store.getters['sale/getItems'];
+    if (undefined === items) {
+        return;
     }
 
-    sale.discounts.forEach((saleDisconts) => {
-        
+    let totalProduct = 0;
+
+    items.forEach((item) => {
+        item.total = item.quantity * item.value;
+
+        if (item.discounts.length > 0) {
+        let totalDiscountPercent = 0;
+        let totalDiscountValue = 0;
+
+        item.discounts.forEach((discount) => {
+
+            if (discount.percent) {
+                totalDiscountPercent += discount.value;
+            } else {
+                totalDiscountValue += discount.value;
+            }
+        });
+
+        const percentDiscount = (item.total * totalDiscountPercent) / 100;
+        item.total -= (percentDiscount + totalDiscountValue);
+        }
+
+        totalProduct += item.total;
+        store.commit('sale/updateItem', item);
     });
-    
-    return sale;
+
+    store.commit('sale/setProductTotal', totalProduct);
+    await processSaleDisconts();
+    return;
 }
+
+async function processSaleDisconts(): Promise<void> {
+    const sale: Sale = store.getters['sale/getSale'];
+    const discounts: Cupom[] = sale.discounts;
+
+    let totalSaleDiscount = 0;
+
+    totalSaleDiscount = discounts
+        .filter(discount => discount.allProducts)
+        .reduce((acc, discount) => {
+            if (discount.percent) {
+                return acc + (sale.products_value * discount.value) / 100;
+            } else {
+                return acc + discount.value;
+            }
+        }, 0);
+
+    // Atualiza o valor total da venda
+    sale.discount_value = totalSaleDiscount;
+    sale.total_value = sale.products_value - sale.discount_value;
+
+    // Atualiza o estado da venda no Vuex
+    store.commit('sale/updateSale', sale);
+}
+
