@@ -72,7 +72,7 @@ const getters: GetterTree<Sale, any> =
     return state.total_value;
   },
   getSale(state): Sale {
-    return state
+    return state;
   },
   getDiscounts:(state) => (code: string | null): Cupom[] =>
   {
@@ -173,6 +173,12 @@ const mutations: MutationTree<Sale> =
   },
   clearDiscont(state){
     state.discounts = []
+  },
+  setProductTotal(state,value){
+    state.products_value = value;
+  },
+  updateSale(state,stateUpdated){
+    state = stateUpdated;
   }
 };
 

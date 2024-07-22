@@ -34,7 +34,7 @@ export interface Person {
     active: boolean;
     default: boolean;
     description: string;
-    allproducts: boolean;
+    allProducts: boolean;
     percent: boolean;
     acumulate: boolean;
     quantity: number | null;

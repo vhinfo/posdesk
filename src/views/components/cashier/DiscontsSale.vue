@@ -10,7 +10,7 @@
         <SvgIcon type="mdi" :path="mdiPlusCircle" class="default-icon" width="25" height="25" @click="showAddDiscountModal"/>
       </div>
     </div>
-    <div v-if="discounts.length === 0" class="no-discounts">
+    <div v-if="discounts.length === 0 && !hasProductDiscounts" class="no-discounts">
       <SvgIcon type="mdi" :path="mdiTagOff" class="no-discounts-icon" width="150" height="150" />
       <p>Nenhum desconto aplicado</p>
     </div>
@@ -24,6 +24,20 @@
             </td>
             <td class="value-column">
               <b>{{ formatValue(discount.value, discount.percent) }}</b>
+            </td>
+          </tr>
+          <tr v-for="product in productsWithDiscounts" :key="product.id" class="discount-item">
+            <td class="description-column">
+              <span v-for="discount in product.discounts" :key="discount.id">
+                <b><span>{{ discount.code }} - </span></b>
+                <span>{{ product.sku }}</span><br>
+                <span>{{ discount.description }}</span><br>
+              </span>
+            </td>
+            <td class="value-column">
+              <span v-for="discount in product.discounts" :key="discount.id">
+                <b>{{ formatValue(discount.value, discount.percent) }}</b><br>
+              </span>
             </td>
           </tr>
         </tbody>
@@ -44,6 +58,15 @@
             <p><b>Código:</b> {{ foundDiscount.code }}</p>
             <p><b>Descrição:</b> {{ foundDiscount.description }}</p>
             <p><b>Valor:</b> {{ foundDiscount.value }}</p>
+            <div v-if="!foundDiscount.allProducts">
+              <h4>Selecione os produtos para aplicar o desconto:</h4>
+              <ul>
+                <li v-for="product in products" :key="product.id">
+                  <input type="checkbox" :value="product.id" v-model="selectedProducts"> 
+                  {{ product.sku +' - R$ '+product.value+ ' - '+product.description }}
+                </li>
+              </ul>
+            </div>
             <button @click="addDiscountToSale">Adicionar à Venda</button>
           </div>
         </div>
@@ -56,9 +79,9 @@
 import { defineComponent, ref, computed } from 'vue';
 import SvgIcon from '@jamescoyle/vue-icon';
 import { mdiTagMultiple, mdiTagOff, mdiPlusCircle, mdiCloseBox, mdiDelete } from '@mdi/js';
-import { Cupom } from '../../../types';
+import { Cupom, Item } from '../../../types';
 import { useStore } from 'vuex';
-import { getCupom,addDiscontToCurrentSale, clearDiscont } from '../../../controllers/cashierController';
+import { getCupom, addDiscontToCurrentSale, clearDiscont } from '../../../controllers/cashierController';
 
 export default defineComponent({
   name: 'DiscontsSale',
@@ -68,9 +91,11 @@ export default defineComponent({
   setup() {
     const store = useStore();
     const discounts = computed(() => store.state.sale.discounts);
+    const products = computed(() => store.state.sale.items);
     const isModalVisible = ref(false);
     const discountCode = ref('');
     const foundDiscount = ref<Cupom | null>(null);
+    const selectedProducts = ref<number[]>([]);
 
     const showAddDiscountModal = () => {
       isModalVisible.value = true;
@@ -80,19 +105,25 @@ export default defineComponent({
       isModalVisible.value = false;
       discountCode.value = '';
       foundDiscount.value = null;
+      selectedProducts.value = [];
     };
 
     const searchDiscount = async () => {
       foundDiscount.value = await getCupom(discountCode.value);
+      console.log('returned  cupom', foundDiscount.value)
     };
 
-    const clearDiscontSale = async() => {
+    const clearDiscontSale = async () => {
       await clearDiscont();
-    }
+    };
 
     const addDiscountToSale = async () => {
       if (foundDiscount.value) {
-        await addDiscontToCurrentSale(foundDiscount.value);
+        if (!foundDiscount.value.allProducts && selectedProducts.value.length === 0) {
+          alert('Selecione pelo menos um produto para aplicar o desconto.');
+          return;
+        }
+        await addDiscontToCurrentSale(foundDiscount.value, selectedProducts.value);
         hideAddDiscountModal();
       }
     };
@@ -104,11 +135,23 @@ export default defineComponent({
       });
     };
 
+    const hasProductDiscounts = computed(() => {
+      return products.value.some((product: Item) => product.discounts && product.discounts.length > 0);
+    });
+
+    const productsWithDiscounts = computed(() => {
+      return products.value.filter((product: Item) => product.discounts && product.discounts.length > 0);
+    });
+
     return {
       discounts,
       isModalVisible,
       discountCode,
       foundDiscount,
+      selectedProducts,
+      products,
+      hasProductDiscounts,
+      productsWithDiscounts,
       mdiTagMultiple,
       mdiTagOff,
       mdiPlusCircle,
@@ -169,7 +212,7 @@ export default defineComponent({
 .discount-item {
   display: flex;
   justify-content: space-between;
-  align-items: flex-start; 
+  align-items: flex-start;
   padding: 10px;
   border-bottom: 1px solid #00000098;
   word-break: break-word;
@@ -224,14 +267,14 @@ export default defineComponent({
 
 .modal {
   position: fixed;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    background-color: rgba(0, 0, 0, 0.603);
-    display: flex;
-    justify-content: center;
-    align-items: center;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.603);
+  display: flex;
+  justify-content: center;
+  align-items: center;
 }
 
 .modal-content {
@@ -239,7 +282,7 @@ export default defineComponent({
   border-radius: 10px;
   padding: 20px;
   width: 40%;
-  max-width: 600px
+  max-width: 600px;
 }
 
 .modal-header {
@@ -249,16 +292,23 @@ export default defineComponent({
 }
 
 .modal-body {
-  margin-top: 20px;
+  margin-top: 10px;
 }
 
 .close-icon {
   cursor: pointer;
-  color: #aaa;
 }
-.close-icon-red{
-  cursor: pointer;
-  margin-left: 20px;
-  color: #9e0e0e;
+
+input[type="text"] {
+  width: 100%;
+  padding: 8px;
+  margin-bottom: 10px;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  box-sizing: border-box;
+}
+
+input[type="checkbox"] {
+  margin-right: 10px;
 }
 </style>
