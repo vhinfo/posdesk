@@ -154,15 +154,15 @@ async function processSaleDisconts(): Promise<void> {
         .filter(discount => discount.allProducts)
         .reduce((acc, discount) => {
             if (discount.percent) {
-                return acc + (sale.products_value * discount.value) / 100;
+                return acc + (sale.productsValue * discount.value) / 100;
             } else {
                 return acc + discount.value;
             }
         }, 0);
 
     // Atualiza o valor total da venda
-    sale.discount_value = parseFloat(totalSaleDiscount.toFixed(2));
-    sale.total_value = parseFloat((sale.products_value - sale.discount_value).toFixed(2));
+    sale.discountValue = parseFloat(totalSaleDiscount.toFixed(2));
+    sale.totalValue = parseFloat((sale.productsValue - sale.discountValue).toFixed(2));
 
     // Atualiza o estado da venda no Vuex
     store.commit('sale/updateSale', sale);
@@ -182,6 +182,34 @@ export async function addPaymentSale(paymentMethod: PaymentMethod, value: number
       };
       store.commit('sale/addPayment', newPayment);
     }
-  }
-  
+    await processPayment();
+}
+
+async function processPayment():Promise<void>
+{
+    const payments: Payment[] | undefined = store.getters['sale/getPayments'];
+    if(undefined === payments){
+        return;
+    }
+    let paymentTotal = 0;
+    payments.forEach((payment)=>{
+        paymentTotal += payment.value;
+    })
+
+    store.commit('sale/setPaymentTotal', paymentTotal);
+}
+
+export async function forgeNewSale()//:Promise<void>
+{
+    const sale: Sale = store.getters['sale/getSale'];
+    if(!sale){
+        throw new Error('não foi possível localizar a venda no vuex');
+    }
+
+    const saleClone = JSON.parse(JSON.stringify(sale));
+
+    await window.saleService.sendSale(saleClone);
+    // store.commit('sale/clearSale');
+}
+
 
