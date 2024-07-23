@@ -2,12 +2,11 @@ import { BaseEntity } from './BaseEntity';
 import { Store } from './Store';
 import { Cashier } from './Cashier';
 import { User } from './User';
-import { Customer } from './Customer';
-import { Salesman } from './Person';
+import { Person } from './Person';
 import { Payment } from './Payment';
 import { Product } from './Product';
-import { Discount } from './Discount';
 import sqlite3 from 'sqlite3';
+import { Cupom } from './Cupom';
 
 export class Sale extends BaseEntity {
     id: number;
@@ -18,8 +17,8 @@ export class Sale extends BaseEntity {
     forceCustomer: boolean;
     paymentMethod: number;
     validSale: boolean;
-    number: string;
-    saleDate: Date;
+    number: string|null;
+    saleDate: Date|string;
     store: Store;
     cashier: Cashier;
     employeeCashier: User;
@@ -35,11 +34,11 @@ export class Sale extends BaseEntity {
     invoiceNumber: string;
     invoiceCoupon: string;
     invoiceXml: string;
-    customer: Customer;
-    salesman: Salesman;
+    customer: Person;
+    salesman: Person;
     payments: Payment[];
     items: Product[];
-    discounts: Discount[];
+    discounts: Cupom[];
     nfceNumber: string; 
     nfceCoupon: string;
     status: string;
@@ -80,7 +79,7 @@ export class Sale extends BaseEntity {
         force_customer: boolean;
         payment_method: number;
         valid_sale: boolean;
-        number: string;
+        number: string|null;
         sale_date: Date;
         store: Store;
         cashier: Cashier;
@@ -97,11 +96,11 @@ export class Sale extends BaseEntity {
         invoice_number: string;
         invoice_coupon: string;
         invoice_xml: string;
-        customer: Customer;
-        salesman: Salesman;
+        customer: Person;
+        salesman: Person;
         payments: Payment[];
         items: Product[];
-        discounts: Discount[];
+        discounts: Cupom[];
         nfce: {
             number: string;
             coupon: string;

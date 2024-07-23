@@ -3,7 +3,7 @@ import sqlite3 from 'sqlite3';
 
 export class Person extends BaseEntity {
     id: number;
-    document: number;
+    document: number|string;
     name: string;
     email: string;
     phone: string;

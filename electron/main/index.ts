@@ -9,6 +9,8 @@ import { DatabaseService } from '../services/databaseService';
 import { productService } from '../services/productService'; 
 import { personService } from '../services/personService';
 import { cupomService } from '../services/cupomService';
+import { Sale } from '../models/Sale';
+import { saleService } from '../services/saleService';
 
 log.initialize();
 const appDirectory = path.dirname(app.getPath('exe'));
@@ -190,5 +192,10 @@ ipcMain.handle('create-customer', async (event, customer) => {
 ipcMain.handle('get-cupom', async (event, code:string) => {
   return await cupomService.getCupom(code);
 });
+
+// SALE
+ipcMain.handle('send-sale', async (event, sale:Sale) => {
+  return await saleService.sendSale(sale);
+})
 
 

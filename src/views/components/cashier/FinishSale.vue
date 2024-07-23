@@ -39,8 +39,8 @@
                   <td>
                     <SvgIcon type="mdi" :path="mdiCloseBox" class="remove-icon" width="20" height="20" @click="removePayment(index)" />
                   </td>
-                  <td > {{ payment.method.description }} </td>
-                  <td> R$ {{ payment.amount.toFixed(2) }} </td>
+                  <td > {{ payment.description }} </td>
+                  <td> R$ {{ payment.value.toFixed(2) }} </td>
                 </tr>
               </tbody>
             </table>
@@ -62,7 +62,7 @@ import SvgIcon from '@jamescoyle/vue-icon';
 import { mdiCheck, mdiCloseBox } from '@mdi/js';
 import SaleTotals from './SaleTotals.vue';
 import { PaymentMethod } from '../../../types';
-import { addPaymentSale } from '../../../controllers/cashierController'
+import { addPaymentSale, forgeNewSale } from '../../../controllers/cashierController'
 
 export default defineComponent({
   name: 'FinishSale',
@@ -97,7 +97,6 @@ export default defineComponent({
       }
 
       await addPaymentSale(selectedPaymentMethod.value, paymentAmount.value)
-      payments.value.push({ method: selectedPaymentMethod.value, value: paymentAmount.value });
       paymentAmount.value = 0;
     };
 
@@ -106,15 +105,23 @@ export default defineComponent({
       payments.value.splice(index, 1);
     };
 
-    const finishSale = () => {
-      if (payments.value.length === 0) {
-        alert('Por favor, adicione pelo menos um pagamento.');
-        return;
+    const finishSale = async () => {
+      try{
+        if (payments.value.length === 0) {
+          alert('Por favor, adicione pelo menos um pagamento.');
+          return;
+        }
+        await forgeNewSale();
+        // Lógica para finalizar a venda
+        console.log('Venda finalizada com os seguintes pagamentos:', payments.value);
+        closeModal();
+      }catch(e){
+        console.error('falha ao processar venda: ', e);
+        store.dispatch('messageHandle/alert', {
+          message: 'não foi possível salvar a venda',
+          type: 'error',
+        }); 
       }
-
-      // Lógica para finalizar a venda
-      console.log('Venda finalizada com os seguintes pagamentos:', payments.value);
-      closeModal();
     };
 
     return {

@@ -1,5 +1,6 @@
 import { ipcRenderer, contextBridge } from 'electron';
 import { Person } from '../models/Person';
+import { Sale } from '../models/Sale';
 // import { authService } from '../services/authService';
 
 // --------- Expose some API to the Renderer process ---------
@@ -154,3 +155,10 @@ contextBridge.exposeInMainWorld('cupomService', {
     return ipcRenderer.invoke('get-cupom',code);
   },
 });
+
+// SALE
+contextBridge.exposeInMainWorld('saleService',{
+  sendSale: (sale:Sale) => {
+    return ipcRenderer.invoke('send-sale',sale);
+  }
+})

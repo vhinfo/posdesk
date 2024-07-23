@@ -4,28 +4,28 @@ import { Cupom, Item, Payment, Person, Sale } from '../../types';
 const state: Sale = 
 {
   change_value: 0,
-  qtd_items: 0,
-  qtd_payments: 0,
+  qtdItems: 0,
+  qtdPayments: 0,
   forceCustomer: false,
-  payment_method: '',
-  valid_sale: false,
+  paymentMethod: '',
+  validSale: false,
   number: '',
-  sale_date: '',
+  saleDate: '',
   store: '',
   cashier: '',
-  employee_cashier: '',
-  employee_sale: false,
+  employeeCashier: '',
+  employeeSale: false,
   obs: '',
-  sys_obs: '',
-  products_value: 0,
-  payments_value: 0,
-  discount_value: 0,
-  total_value: 0,
+  sysObs: '',
+  productsValue: 0,
+  paymentsValue: 0,
+  discountValue: 0,
+  totalValue: 0,
   invoice: false,
-  invoice_serie: '',
-  invoice_number: '',
-  invoice_coupon: '',
-  invoice_xml: '',
+  invoiceSerie: '',
+  invoiceNumber: '',
+  invoiceCoupon: '',
+  invoiceXml: '',
   customer: {
     id: null,
     document: '',
@@ -69,7 +69,7 @@ const getters: GetterTree<Sale, any> =
     return state.payments.reduce((total, payment) => total + payment.value, 0);
   },
   getTotalSaleValue(state): number {
-    return state.total_value;
+    return state.totalValue;
   },
   getSale(state): Sale {
     return state;
@@ -85,7 +85,7 @@ const getters: GetterTree<Sale, any> =
   getPaymentByMethod: (state) => (methodId: number): Payment | undefined => {
     return state.payments.find(payment => payment.id === methodId);
   },
-  payments: (state) => state.payments
+  getPayments: (state) => state.payments
 };
 
 const mutations: MutationTree<Sale> = 
@@ -103,17 +103,17 @@ const mutations: MutationTree<Sale> =
     }
   },
   updateTotals(state) {
-    state.products_value = state.items.reduce((total, item) => total + item.price * item.quantity, 0);
-    state.payments_value = state.payments.reduce((total, payment) => total + payment.value, 0);
-    state.discount_value = state.items.reduce((total, item) => total + item.discounts.reduce((subtotal, discount) => subtotal + discount.value, 0), 0);
-    state.total_value = state.products_value - state.discount_value;
+    state.productsValue = state.items.reduce((total, item) => total + item.price * item.quantity, 0);
+    state.productsValue = state.payments.reduce((total, payment) => total + payment.value, 0);
+    state.productsValue = state.items.reduce((total, item) => total + item.discounts.reduce((subtotal, discount) => subtotal + discount.value, 0), 0);
+    state.totalValue = state.productsValue - state.discountValue;
   },
   clearItems(state) {
     state.items = [];
-    state.products_value = 0;
-    state.payments_value = 0;
-    state.discount_value = 0;
-    state.total_value = 0;
+    state.productsValue = 0;
+    state.paymentsValue = 0;
+    state.discountValue = 0;
+    state.totalValue = 0;
   },
   clearCustomer(state) {
     state.customer = null;
@@ -126,28 +126,28 @@ const mutations: MutationTree<Sale> =
   },
   clearSale(state) {
     state.change_value = 0;
-    state.qtd_items = 0;
-    state.qtd_payments = 0;
+    state.qtdItems = 0;
+    state.qtdPayments = 0;
     state.forceCustomer = false;
-    state.payment_method = '';
-    state.valid_sale = false;
+    state.paymentMethod = '';
+    state.validSale = false;
     state.number = '';
-    state.sale_date = '';
+    state.saleDate = '';
     state.store = '';
     state.cashier = '';
-    state.employee_cashier = '';
-    state.employee_sale = false;
+    state.employeeCashier = '';
+    state.employeeSale = false;
     state.obs = '';
-    state.sys_obs = '';
-    state.products_value = 0;
-    state.payments_value = 0;
-    state.discount_value = 0;
-    state.total_value = 0;
+    state.sysObs = '';
+    state.productsValue = 0;
+    state.paymentsValue = 0;
+    state.discountValue = 0;
+    state.totalValue = 0;
     state.invoice = false;
-    state.invoice_serie = '';
-    state.invoice_number = '';
-    state.invoice_coupon = '';
-    state.invoice_xml = '';
+    state.invoiceSerie = '';
+    state.invoiceNumber = '';
+    state.invoiceCoupon = '';
+    state.invoiceXml = '';
     state.customer = {
       id: null,
       document: '',
@@ -179,7 +179,7 @@ const mutations: MutationTree<Sale> =
     state.discounts = []
   },
   setProductTotal(state,value){
-    state.products_value = value;
+    state.productsValue = value;
   },
   updateSale(state,stateUpdated){
     state = stateUpdated;
@@ -192,6 +192,9 @@ const mutations: MutationTree<Sale> =
     if (paymentIndex !== -1) {
       state.payments[paymentIndex].value = updatedPayment.value;
     }
+  },
+  setPaymentTotal(state, value){
+    state.paymentsValue = value;
   }
 };
 

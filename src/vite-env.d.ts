@@ -32,6 +32,9 @@ interface Window {
   cupomService: {
     getCupom: (code: string) => Promise<any>;
   };
+  saleService: {
+    sendSale: (sale:Sale) => Promise<any>;
+  }
 }
 
 declare global {
