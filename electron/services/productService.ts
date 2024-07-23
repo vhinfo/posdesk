@@ -118,7 +118,7 @@ export const productService =
 
     async getProductsByPage(page:number):Promise<Product[]|undefined>
     {   
-        const pageSize = 20;
+        const pageSize = 50;
         const products = await Product.findByPage(db, page, pageSize);
         return products;
     }

@@ -1,5 +1,5 @@
 import store from '../store';
-import { Cupom, Item, Product, Sale } from '../types';
+import { Cupom, Item, Payment, PaymentMethod, Product, Sale } from '../types';
 
 export async function addProductToCart(product: Product): Promise<boolean> 
 {
@@ -79,7 +79,6 @@ export async function addDiscontToCurrentSale(cupom: Cupom, selectedProducts: nu
     
     store.commit('sale/addDiscont', cupom);
     await processProducts();
-    await processSaleDisconts();
     return null;
 }
 
@@ -133,7 +132,7 @@ async function processProducts(): Promise<void> {
         });
 
         const percentDiscount = (item.total * totalDiscountPercent) / 100;
-        item.total -= (percentDiscount + totalDiscountValue);
+        item.total -= parseFloat((percentDiscount + totalDiscountValue).toFixed(2));
         }
 
         totalProduct += item.total;
@@ -162,10 +161,27 @@ async function processSaleDisconts(): Promise<void> {
         }, 0);
 
     // Atualiza o valor total da venda
-    sale.discount_value = totalSaleDiscount;
-    sale.total_value = sale.products_value - sale.discount_value;
+    sale.discount_value = parseFloat(totalSaleDiscount.toFixed(2));
+    sale.total_value = parseFloat((sale.products_value - sale.discount_value).toFixed(2));
 
     // Atualiza o estado da venda no Vuex
     store.commit('sale/updateSale', sale);
 }
+
+export async function addPaymentSale(paymentMethod: PaymentMethod, value: number): Promise<void> {
+    const existingPayment: Payment | undefined = store.getters['sale/getPaymentByMethod'](paymentMethod.id);
+  
+    if (existingPayment) {
+      // Somar o valor ao pagamento existente
+      const updatedAmount = existingPayment.value + value;
+      store.commit('sale/updatePayment', { method: paymentMethod, amount: updatedAmount });
+    } else {
+      const newPayment: Payment = {
+        ...paymentMethod,
+        value: value
+      };
+      store.commit('sale/addPayment', newPayment);
+    }
+  }
+  
 

@@ -1,5 +1,5 @@
 import { Module, MutationTree, ActionTree, GetterTree } from 'vuex';
-import { Cupom, Item, Person, Sale } from '../../types';
+import { Cupom, Item, Payment, Person, Sale } from '../../types';
 
 const state: Sale = 
 {
@@ -81,7 +81,11 @@ const getters: GetterTree<Sale, any> =
     }
   
     return state.discounts.filter(discount => discount.code === code);
-  }
+  },
+  getPaymentByMethod: (state) => (methodId: number): Payment | undefined => {
+    return state.payments.find(payment => payment.id === methodId);
+  },
+  payments: (state) => state.payments
 };
 
 const mutations: MutationTree<Sale> = 
@@ -179,6 +183,15 @@ const mutations: MutationTree<Sale> =
   },
   updateSale(state,stateUpdated){
     state = stateUpdated;
+  },
+  addPayment(state, payment: Payment) {
+    state.payments.push(payment);
+  },
+  updatePayment(state, updatedPayment: Payment) {
+    const paymentIndex = state.payments.findIndex(payment => payment.id === updatedPayment.id);
+    if (paymentIndex !== -1) {
+      state.payments[paymentIndex].value = updatedPayment.value;
+    }
   }
 };
 
