@@ -23,7 +23,6 @@ export async function getPerson(token:string, document:string): Promise<any> {
 }
 
 export async function createCustomer(token:string, customer:Person): Promise<any> {
-  console.log('in api save customer');
   const headers: HeadersInit = {
     "Authorization":  `Bearer ${token}`,
     "Content-Type": "application/json"

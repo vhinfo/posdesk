@@ -11,7 +11,7 @@ export class Cupom extends BaseEntity {
     description: string;
     allProducts: boolean;
     percent: boolean;
-    accumulate: boolean; 
+    acumulate: boolean; 
     quantity: number | null;
     withValidate: boolean;
     startDate: Date;
@@ -28,7 +28,7 @@ export class Cupom extends BaseEntity {
         { name: 'description', type: 'TEXT' },
         { name: 'allProducts', type: 'INTEGER' },
         { name: 'percent', type: 'INTEGER' },
-        { name: 'accumulate', type: 'INTEGER' },
+        { name: 'acumulate', type: 'INTEGER' },
         { name: 'quantity', type: 'INTEGER' },
         { name: 'withValidate', type: 'INTEGER' },
         { name: 'startDate', type: 'TEXT' },
@@ -46,7 +46,7 @@ export class Cupom extends BaseEntity {
         description: string,
         allProducts: boolean,
         percent: boolean,
-        accumulate: boolean,
+        acumulate: boolean,
         quantity: number | null,
         withValidate: boolean,
         startDate: Date,

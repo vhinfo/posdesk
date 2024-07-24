@@ -101,7 +101,6 @@ export default defineComponent({
     };
 
     const removePayment = (index: number) => {
-      console.log(`Pagamento removido:`, payments.value[index]);
       payments.value.splice(index, 1);
     };
 
@@ -113,12 +112,11 @@ export default defineComponent({
         }
         await forgeNewSale();
         // Lógica para finalizar a venda
-        console.log('Venda finalizada com os seguintes pagamentos:', payments.value);
         closeModal();
       }catch(e){
         console.error('falha ao processar venda: ', e);
         store.dispatch('messageHandle/alert', {
-          message: 'não foi possível salvar a venda',
+          message: `não foi possível salvar a venda${e}`,
           type: 'error',
         }); 
       }

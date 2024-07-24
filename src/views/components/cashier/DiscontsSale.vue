@@ -10,7 +10,7 @@
         <SvgIcon type="mdi" :path="mdiPlusCircle" class="default-icon" width="25" height="25" @click="showAddDiscountModal"/>
       </div>
     </div>
-    <div v-if="discounts.length === 0 && !hasProductDiscounts" class="no-discounts">
+    <div v-if="null===discounts && !hasProductDiscounts" class="no-discounts">
       <SvgIcon type="mdi" :path="mdiTagOff" class="no-discounts-icon" width="150" height="150" />
       <p>Nenhum desconto aplicado</p>
     </div>
@@ -110,7 +110,6 @@ export default defineComponent({
 
     const searchDiscount = async () => {
       foundDiscount.value = await getCupom(discountCode.value);
-      console.log('returned  cupom', foundDiscount.value)
     };
 
     const clearDiscontSale = async () => {
@@ -118,14 +117,22 @@ export default defineComponent({
     };
 
     const addDiscountToSale = async () => {
-      if (foundDiscount.value) {
-        if (!foundDiscount.value.allProducts && selectedProducts.value.length === 0) {
-          alert('Selecione pelo menos um produto para aplicar o desconto.');
-          return;
+        try{
+          if (foundDiscount.value) {
+            if (!foundDiscount.value.allProducts && selectedProducts.value.length === 0) {
+              alert('Selecione pelo menos um produto para aplicar o desconto.');
+              return;
+            }
+            await addDiscontToCurrentSale(foundDiscount.value, selectedProducts.value);
+            hideAddDiscountModal();
+          }
+        }catch(e){
+          console.error('falha ao processar venda: ', e);
+          store.dispatch('messageHandle/alert', {
+            message:  `não foi possível adicionar o desconto:${e}`,
+            type: 'error',
+          }); 
         }
-        await addDiscontToCurrentSale(foundDiscount.value, selectedProducts.value);
-        hideAddDiscountModal();
-      }
     };
 
     const formatValue = (value: number, percent: boolean): string => {
