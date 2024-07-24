@@ -189,7 +189,7 @@ export const authService = {
         description: cupon.description,
         allProducts: cupon.allproducts,
         percent: cupon.percent,
-        accumulate: cupon.accumulate,
+        acumulate: cupon.acumulate,
         quantity: cupon.quantity,
         withValidate: cupon.with_validity,
         startDate: cupon.start_date,

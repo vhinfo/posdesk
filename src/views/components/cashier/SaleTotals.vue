@@ -51,10 +51,10 @@ export default defineComponent({
   },
   setup() {
     const store = useStore();
-    const productsValue = computed(() => store.state.sale.products_value);
-    const paymentsValue = computed(() => store.state.sale.payments_value);
-    const discountValue = computed(() => store.state.sale.discount_value);
-    const totalValue = computed(() => store.state.sale.total_value);
+    const productsValue = computed(() => store.state.sale.productsValue);
+    const paymentsValue = computed(() => store.state.sale.paymentsValue);
+    const discountValue = computed(() => store.state.sale.discountValue);
+    const totalValue = computed(() => store.state.sale.totalValue);
     const change = computed(() => paymentsValue.value - totalValue.value);
     const changeIcon = computed(() => change.value >= 0 ? mdiWallet : mdiAlertCircle);
     const changeLabel = computed(() => change.value >= 0 ? 'Troco' : 'Falta');

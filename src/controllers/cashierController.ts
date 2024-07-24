@@ -3,8 +3,8 @@ import { Cupom, Item, Payment, PaymentMethod, Product, Sale } from '../types';
 
 export async function addProductToCart(product: Product): Promise<boolean> 
 {
-    const item: Item | undefined = store.getters['sale/getProductBySkuOrId'](product.id);
-    if (item) {
+    const item: Item|null = store.getters['sale/getProductBySkuOrId'](product.id);
+    if (null !== item) {
         await quantityProductHandler(product, 1, item);
     } else {
         const newItem: Item = {
@@ -25,24 +25,25 @@ export async function addProductToCart(product: Product): Promise<boolean>
 
 export async function quantityProductHandler(product: Product|null, value: number, item:Item|null = null): Promise<boolean> 
 {
-    if(item === null && product !== null){
-        const item: Item | undefined = store.getters['sale/getProductBySkuOrId'](product.id);
+    if(null === item && null !== product){
+        const item: Item|null = store.getters['sale/getProductBySkuOrId'](product.id);
     }
-    if (item) {
-        const updatedQuantity = item.quantity + value;
-        const updatedItem: Item = {
-            ...item,
-            quantity: updatedQuantity,
-        };
-        if(updatedItem.quantity <= 0){
-            store.commit('sale/removeItem', updatedItem.id);
-        }else{
-            store.commit('sale/updateItem', updatedItem);
-        }
-        await processProducts();
-    } else {
+    if (null === item) {
         throw new Error('Product not found in cart.');
     }
+
+    const updatedQuantity = item.quantity + value;
+    const updatedItem: Item = {
+        ...item,
+        quantity: updatedQuantity,
+    };
+    if(updatedItem.quantity <= 0){
+        store.commit('sale/removeItem', updatedItem.id);
+    }else{
+        store.commit('sale/updateItem', updatedItem);
+    }
+    await processProducts();
+    
     return true;
 }
 
@@ -53,16 +54,16 @@ export async function clearSaleCart():Promise<boolean>
 }
 
 export async function addDiscontToCurrentSale(cupom: Cupom, selectedProducts: number[]): Promise<void | null> {
-    const currentDiscounts: Cupom[] = store.getters['sale/getDisconts'];
+    const currentDiscounts: Cupom[]|null = store.getters['sale/getDiscounts'](null);
 
-    if (cupom.acumulate && currentDiscounts.length > 0) {
+    if (!cupom.acumulate && null !== currentDiscounts && currentDiscounts.length !== 0) {
         throw new Error('Não é possível adicionar um cupom acumulativo quando já existe outro desconto.');
     }
 
     if (selectedProducts.length > 0) {
         selectedProducts.forEach((selected) => {
-            const item: Item | undefined = store.getters['sale/getProductBySkuOrId'](selected);
-            if (undefined !== item) {
+            const item: Item|null = store.getters['sale/getProductBySkuOrId'](selected);
+            if (null !== item) {
                 const hasSameCodeDiscount = item.discounts.some(discount => discount.code === cupom.code);
                 
                 if (hasSameCodeDiscount) {
@@ -82,11 +83,10 @@ export async function addDiscontToCurrentSale(cupom: Cupom, selectedProducts: nu
     return null;
 }
 
-
 export async function clearDiscont():Promise<void>
 {
-    const items: Item[] | undefined = store.getters['sale/getItems'];
-    if (undefined === items) {
+    const items: Item[]|null = store.getters['sale/getItems'];
+    if (null === items) {
         return ;
     }
 
@@ -108,8 +108,8 @@ export async function getCupom(code: string):Promise<Cupom>
 
 // This function gets discounts from each product discount array and calculates each product's total and total sale product.
 async function processProducts(): Promise<void> {
-    const items: Item[] | undefined = store.getters['sale/getItems'];
-    if (undefined === items) {
+    const items: Item[]|null = store.getters['sale/getItems'];
+    if (null === items) {
         return;
     }
 
@@ -139,14 +139,17 @@ async function processProducts(): Promise<void> {
         store.commit('sale/updateItem', item);
     });
 
-    store.commit('sale/setProductTotal', totalProduct);
+    store.commit('sale/setProductTotal', totalProduct.toFixed(2));
     await processSaleDisconts();
     return;
 }
 
 async function processSaleDisconts(): Promise<void> {
     const sale: Sale = store.getters['sale/getSale'];
-    const discounts: Cupom[] = sale.discounts;
+    const discounts: Cupom[]|null = sale.discounts;
+    if(null === discounts){
+        return;
+    }
 
     let totalSaleDiscount = 0;
 
@@ -169,7 +172,7 @@ async function processSaleDisconts(): Promise<void> {
 }
 
 export async function addPaymentSale(paymentMethod: PaymentMethod, value: number): Promise<void> {
-    const existingPayment: Payment | undefined = store.getters['sale/getPaymentByMethod'](paymentMethod.id);
+    const existingPayment: Payment|null = store.getters['sale/getPaymentByMethod'](paymentMethod.id);
   
     if (existingPayment) {
       // Somar o valor ao pagamento existente
@@ -187,10 +190,11 @@ export async function addPaymentSale(paymentMethod: PaymentMethod, value: number
 
 async function processPayment():Promise<void>
 {
-    const payments: Payment[] | undefined = store.getters['sale/getPayments'];
-    if(undefined === payments){
+    const payments: Payment[]|null = store.getters['sale/getPayments'];
+    if(null === payments){
         return;
     }
+
     let paymentTotal = 0;
     payments.forEach((payment)=>{
         paymentTotal += payment.value;

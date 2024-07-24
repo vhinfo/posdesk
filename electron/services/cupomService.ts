@@ -7,7 +7,6 @@ const db = DatabaseService.getDBInstance();
 
 export const cupomService = {
     async getCupom(code: string): Promise<Cupom> {
-        console.log('inside cupom service');
         let discounts = await Cupom.findBy(db, [['code', '=', code]]);
         if (discounts.length > 0) {
             return discounts[0];
@@ -34,7 +33,7 @@ export const cupomService = {
             description: result.description,
             allProducts: result.allproducts,
             percent: result.percent,
-            accumulate: result.accumulate,
+            acumulate: result.acumulate,
             quantity: result.quantity,
             withValidate: result.with_validity,
             startDate: result.start_date,
@@ -45,14 +44,4 @@ export const cupomService = {
         newCupom.save();
         return newCupom;
     },
-    
-    async saveDiscount(cupom:Cupom):Promise<void>
-    {
-        console.log('TODO SAVE DISCOUNT');
-    },
-    
-    async saveProductDiscount(cupom:Cupom):Promise<void>
-    {
-        console.log('TODO SAVE PRODUCT DISCOUNT');
-    }
 }

@@ -49,7 +49,6 @@ export async function processSaleCustomer(customer: Person): Promise<boolean> {
         }
     }
 
-    console.log(simplifiedCustomer);
     store.commit('sale/clearCustomer');
     store.commit('sale/addCustomer', simplifiedCustomer);
 

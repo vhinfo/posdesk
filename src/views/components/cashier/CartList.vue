@@ -7,7 +7,7 @@
       </div>
       <SvgIcon type="mdi" :path="mdiDelete" class="default-icon-red" width="25" height="25" @click="clearCart"/>
     </div>
-    <div v-if="products.length === 0" class="no-cart">
+    <div v-if="null=== products" class="no-cart">
       <SvgIcon type="mdi" :path="mdiCartOff" class="no-products-icon" width="150" height="150" />
       <p>Carrinho vazio</p>
     </div>

@@ -1,71 +1,67 @@
 import { Module, MutationTree, ActionTree, GetterTree } from 'vuex';
 import { Cupom, Item, Payment, Person, Sale } from '../../types';
 
-const state: Sale = 
-{
-  change_value: 0,
-  qtdItems: 0,
-  qtdPayments: 0,
-  forceCustomer: false,
-  paymentMethod: '',
-  validSale: false,
-  number: '',
-  saleDate: '',
-  store: '',
-  cashier: '',
-  employeeCashier: '',
+const state: Sale = {
+  id:null,
+  paymentMethod: null,
+  number: null,
+  saleDate: null,
+  store: null,
+  cashier: null,
+  employeeCashier: null,
   employeeSale: false,
-  obs: '',
-  sysObs: '',
+  obs: null,
+  sysObs: null,
   productsValue: 0,
   paymentsValue: 0,
   discountValue: 0,
   totalValue: 0,
+  changeValue:0,
   invoice: false,
-  invoiceSerie: '',
-  invoiceNumber: '',
-  invoiceCoupon: '',
-  invoiceXml: '',
-  customer: {
-    id: null,
-    document: '',
-    name: '',
-    email: '',
-    phone: '',
-    type: '',
-    store_partiner_id: '',
-    store_partiner_name: ''
-  },
-  salesman: {
-    id: null,
-    document: '',
-    name: '',
-    email: '',
-    phone: '',
-    type: '',
-    store_partiner_id: '',
-    store_partiner_name: ''
-  },
-  payments: [],
-  items: [],
-  discounts: []
+  invoiceSerie: null,
+  invoiceNumber: null,
+  invoiceCoupon: null,
+  invoiceXml: null,
+  customer: null,
+  salesman: null,
+  payments: null,
+  items: null,
+  discounts: null,
+  status: 'em edição',
 };
+
 
 const getters: GetterTree<Sale, any> = 
 {
-  getItems(state): Item[] {
+  getItems(state): Item[]|null {
     return state.items;
   },
-  getProductBySkuOrId: (state) => (skuOrId: string | number): Item | undefined => {
-    return state.items.find(item => item.sku === skuOrId || item.id === skuOrId);
+  getProductBySkuOrId: (state) => (skuOrId: string | number): Item|null => {
+    if(null === state.items){
+      return null;
+    }
+
+    return state.items.find(item => item.sku === skuOrId || item.id === skuOrId) ?? null;
   },
   getTotalProductsValue(state): number {
+    if(null === state.items){
+      return 0;
+    }
+
     return state.items.reduce((total, item) => total + item.price * item.quantity, 0);
   },
   getTotalDiscountValue(state): number {
+    if(null === state.items){
+      return 0;
+    }
+
     return state.items.reduce((total, item) => total + item.discounts.reduce((subtotal, discount) => subtotal + discount.value, 0), 0);
   },
   getTotalPaymentsValue(state): number {
+    if(null === state.payments){
+      return 0;
+    }
+
     return state.payments.reduce((total, payment) => total + payment.value, 0);
   },
   getTotalSaleValue(state): number {
@@ -74,16 +70,24 @@ const getters: GetterTree<Sale, any> =
   getSale(state): Sale {
     return state;
   },
-  getDiscounts:(state) => (code: string | null): Cupom[] =>
+  getDiscounts:(state) => (code: string | null): Cupom[]|null =>
   {
     if (code === null) {
       return state.discounts;
     }
-  
+    
+    if(null === state.discounts){
+      return null;
+    }
+
     return state.discounts.filter(discount => discount.code === code);
   },
-  getPaymentByMethod: (state) => (methodId: number): Payment | undefined => {
-    return state.payments.find(payment => payment.id === methodId);
+  getPaymentByMethod: (state) => (methodId: number): Payment | null => {
+    if(null === state.payments){
+      return null;
+    }
+
+    return state.payments.find(payment => payment.id === methodId) ?? null;
   },
   getPayments: (state) => state.payments
 };
@@ -91,25 +95,31 @@ const getters: GetterTree<Sale, any> =
 const mutations: MutationTree<Sale> = 
 {
   addItem(state: Sale, product: Item) {
+    if(null === state.items){
+      state.items = [product];
+    }
+
     state.items.push(product);
   },
   removeItem(state, productId: number) {
+    if(null === state.items){
+      return;
+    }
+
     state.items = state.items.filter(item => item.id !== productId);
   },
   updateItem(state, updatedItem: Item) {
+    if(null === state.items){
+      return;
+    }
+
     const index = state.items.findIndex(item => item.id === updatedItem.id);
     if (index !== -1) {
       state.items.splice(index, 1, updatedItem);
     }
   },
-  updateTotals(state) {
-    state.productsValue = state.items.reduce((total, item) => total + item.price * item.quantity, 0);
-    state.productsValue = state.payments.reduce((total, payment) => total + payment.value, 0);
-    state.productsValue = state.items.reduce((total, item) => total + item.discounts.reduce((subtotal, discount) => subtotal + discount.value, 0), 0);
-    state.totalValue = state.productsValue - state.discountValue;
-  },
   clearItems(state) {
-    state.items = [];
+    state.items = null;
     state.productsValue = 0;
     state.paymentsValue = 0;
     state.discountValue = 0;
@@ -125,54 +135,38 @@ const mutations: MutationTree<Sale> =
     state.obs = obs;
   },
   clearSale(state) {
-    state.change_value = 0;
-    state.qtdItems = 0;
-    state.qtdPayments = 0;
-    state.forceCustomer = false;
-    state.paymentMethod = '';
-    state.validSale = false;
-    state.number = '';
-    state.saleDate = '';
-    state.store = '';
-    state.cashier = '';
-    state.employeeCashier = '';
+    state.paymentMethod = null;
+    state.number = null;
+    state.saleDate = null;
+    state.store = null;
+    state.cashier = null;
+    state.employeeCashier = null;
     state.employeeSale = false;
-    state.obs = '';
-    state.sysObs = '';
+    state.obs = null;
+    state.sysObs = null;
     state.productsValue = 0;
     state.paymentsValue = 0;
     state.discountValue = 0;
     state.totalValue = 0;
+    state.changeValue = 0;
     state.invoice = false;
-    state.invoiceSerie = '';
-    state.invoiceNumber = '';
-    state.invoiceCoupon = '';
-    state.invoiceXml = '';
-    state.customer = {
-      id: null,
-      document: '',
-      name: '',
-      email: '',
-      phone: '',
-      type: '',
-      store_partiner_id: '',
-      store_partiner_name: ''
-    };
-    state.salesman = {
-      id: null,
-      document: '',
-      name: '',
-      email: '',
-      phone: '',
-      type: '',
-      store_partiner_id: '',
-      store_partiner_name: ''
-    };
-    state.payments = [];
-    state.items = [];
-    state.discounts = [];
+    state.invoiceSerie = null;
+    state.invoiceNumber = null;
+    state.invoiceCoupon = null;
+    state.invoiceXml = null;
+    state.customer = null;
+    state.salesman = null;
+    state.payments = null;
+    state.items = null;
+    state.discounts = null;
+    state.status = 'em edicão';
   },
   addDiscont(state, cupom: Cupom) {
+    if(null === state.discounts){
+      state.discounts = [cupom];
+      return;
+    }
+
     state.discounts.push(cupom);
   },
   clearDiscont(state){
@@ -185,15 +179,24 @@ const mutations: MutationTree<Sale> =
     state = stateUpdated;
   },
   addPayment(state, payment: Payment) {
+    if(null === state.payments){
+      state.payments = [payment];
+      return;
+    }
+
     state.payments.push(payment);
   },
   updatePayment(state, updatedPayment: Payment) {
+    if(null === state.payments){
+      return;
+    }
+
     const paymentIndex = state.payments.findIndex(payment => payment.id === updatedPayment.id);
     if (paymentIndex !== -1) {
       state.payments[paymentIndex].value = updatedPayment.value;
     }
   },
-  setPaymentTotal(state, value){
+  setPaymentTotal(state, value:number){
     state.paymentsValue = value;
   }
 };
