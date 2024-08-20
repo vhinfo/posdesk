@@ -143,6 +143,7 @@ export default defineComponent({
     };
 
     const hasProductDiscounts = computed(() => {
+      if (null === products.value) { return null; }
       return products.value.some((product: Item) => product.discounts && product.discounts.length > 0);
     });
 
