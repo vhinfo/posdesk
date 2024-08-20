@@ -10,11 +10,11 @@ const db = DatabaseService.getDBInstance();
 
 export const saleService =
 {
-   async sendSale(sale:Sale):Promise<any>
-   {    
+    async sendSale(sale:Sale):Promise<any>
+    {    
         // validations 
         if (sale.payments.length === 0) {
-           throw new Error('venda sem nenhuma forma de pagameto');
+            throw new Error('venda sem nenhuma forma de pagameto');
         }
         
         if(sale.items.length === 0) {
@@ -43,16 +43,8 @@ export const saleService =
             sale.number = await this.forgeSaleNumber(sale,user);
         }
         
-        console.log(JSON.stringify(sale));
 
-        // sale send
-        const remoteSale = await sendSale(user.accessToken, sale);
-        if(!remoteSale){
-            throw new Error('falha ao salvar a venda');
-        }
-
-        // save/update sqlite
-   },
+    },
 
     async forgeSaleNumber(sale:Sale, user:User):Promise<string>
     {
@@ -75,8 +67,8 @@ export const saleService =
         return `${date}${paymentCount}${productCount}${store}${total}`;
     },
 
-   async validateCoupom(sale:Sale):Promise<void>
-   {
+    async validateCoupom(sale:Sale):Promise<void>
+    {
         if(sale.discounts.length === 0){
             return;
         }
@@ -93,7 +85,6 @@ export const saleService =
                 throw new Error('cupom informado sem um cliente informado');
             }
         }
-        
-   }
+    }
 }
 

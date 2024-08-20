@@ -97,6 +97,7 @@ const mutations: MutationTree<Sale> =
   addItem(state: Sale, product: Item) {
     if(null === state.items){
       state.items = [product];
+      return;
     }
 
     state.items.push(product);

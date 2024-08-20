@@ -17,9 +17,9 @@ export async function addProductToCart(product: Product): Promise<boolean>
             discounts: [],
             total: product.price,
         };
-        store.commit('sale/addItem', newItem);
-        await processProducts();
+        await store.commit('sale/addItem', newItem);
     }
+    await processProducts();
     return false;
 }
 
@@ -106,7 +106,6 @@ export async function getCupom(code: string):Promise<Cupom>
     return await window.cupomService.getCupom(code);
 }
 
-// This function gets discounts from each product discount array and calculates each product's total and total sale product.
 async function processProducts(): Promise<void> {
     const items: Item[]|null = store.getters['sale/getItems'];
     if (null === items) {
@@ -141,7 +140,6 @@ async function processProducts(): Promise<void> {
 
     store.commit('sale/setProductTotal', totalProduct.toFixed(2));
     await processSaleDisconts();
-    return;
 }
 
 async function processSaleDisconts(): Promise<void> {
